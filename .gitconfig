@@ -1,0 +1,67 @@
+[include]
+  path = ~/.gitconfig.user
+  path = ~/.gitconfig.kat.aliases
+  # path = ~/.gitconfig.my.aliases
+
+[core]
+  excludesfile = ~/.gitignore
+  # https://stackoverflow.com/questions/10418975/how-to-change-line-ending-settings
+  autocrlf = true
+
+[push]
+  # only push to the remote branch *being tracked* by local branch, if no tracking specified, it will refuse the push
+  default = simple
+
+[branch]
+  # https://randyfay.com/content/simpler-rebasing-avoiding-unintentional-merge-commits
+  # Prevent 'unintentional' merge commits when pulling code
+  autosetuprebase = always
+
+[branch "master"]
+  rebase = true
+
+[merge]
+  # Always merge with --no-ff
+  # https://nvie.com/posts/a-successful-git-branching-model/
+  # "This avoids losing information about the historical existence of a feature branch and groups together all commits that together added the feature."
+  ff = false
+
+[pull]
+  ff = only
+
+[filter "lfs"]
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+  required = true
+  process = git-lfs filter-process
+
+[help]
+  autocorrect = 1
+
+[difftool]
+  prompt = false
+
+[difftool "diffmerge"]
+  cmd = 'C:/Program Files/SourceGear/Common/DiffMerge/sgdm.exe' \"$LOCAL\" \"$REMOTE\"
+
+[difftool "bc3"]
+  cmd = 'C:/Program Files (x86)/beyond compare 3/bcomp.exe' \"$LOCAL\" \"$REMOTE\"
+
+[difftool "submlimemerge"]
+  cmd = 'C:/Program Files/Sublime Merge/sublime_merge.exe' \"$LOCAL\" \"$REMOTE\"
+
+# Merge Tool - I don't use this, I always just use text editor, but leaving settings in to show how to configure diffmerge
+#[merge]
+#  tool = diffmerge
+
+#[mergetool "diffmerge"]
+#  cmd = 'C:/Program Files/SourceGear/Common/DiffMerge/sgdm.exe' --merge --result="$MERGED" "$LOCAL" "$(if test -f "$BASE"; then echo "$BASE"; else echo "$LOCAL"; fi)" "$REMOTE"
+#  trustExitCode = true
+#  keepBackup = false
+
+# textconv settings - not using now because things seem to work, but if I used this I could set up something to be
+# processed by strings.exe before comparing.  This would be in the .gitattributes file:
+# #*.sql   diff=strings
+#[diff "strings"]
+#  textconv = "C:/Program Files/SysInternals/strings.exe"
+#  cachetextconv = true

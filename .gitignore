@@ -1,0 +1,54 @@
+# .gitignore settings for BTR Developers
+# Check out: http://stackoverflow.com/questions/2143956/gitignore-for-visual-studio-projects-and-solutions
+
+# git config --global core.excludesfile ~/.gitignore_global
+# http://help.github.com/git-ignore/
+
+~*.xls*
+*.user
+*.vbg
+*.vbw
+*.lib
+*.exp
+*.vspscc
+*.vssscc
+*.scc
+*.suo
+*.cache
+*.sln
+UpgradeLog.*
+Thumbs.db
+*.backup
+*.Publish.xml
+.gitRepo
+*.t4properties
+
+Zombie/
+_Archive/
+
+deploy
+deploy/*
+[Oo]bj/
+[Bb]in/
+packages/
+_UpgradeReport_Files/
+TestResults/
+.vs/
+
+Clients/
+Assemblies/
+_Assemblies.Restart/
+
+Backup/
+_Developer/Help/
+Rbl/Setup/
+System Monitor/
+SSOTest/
+Data/BTR.DataLocker/TestClient/
+Rbl/BTR.Broker/Config/
+Rbl/BTR.Broker/Logs/
+Rbl/BTR.Broker/ModelingPreview/
+
+Functions/
+Shared*/
+!**/Views/Shared*/

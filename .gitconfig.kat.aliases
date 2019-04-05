@@ -1,0 +1,72 @@
+[alias]
+  # http://jondavidjohn.com/git-aliases-parameters/
+  # http://robots.thoughtbot.com/the-unix-shells-humble-if
+  # http://stackoverflow.com/questions/16843382/colored-shell-script-output-library
+
+  # TODO: Figure out correct way to call external file/function
+  # https://stackoverflow.com/questions/46695859/should-i-use-sh-c-or-f-f-in-git-alias-scripts/46698535?noredirect=1#comment97121794_46698535
+  aliases = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && showAliases "$0" "$@"'
+
+  open = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && openInBrowser'  
+  browse = !git open
+  ac = !git add -A && git commit -m 
+  br = branch
+  co = checkout
+  com = commit
+  commend = !sh -c 'git add . && git commit --amend' -
+  st = status --short --branch
+  l = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && showMyLog "$0" "$@"'
+
+  undo = !git z-undo
+  undo-all = reset --hard HEAD
+  unstage = reset HEAD --
+  unstage-all = !git z-unstage-all
+  prev = !git z-previous
+  prev = !git z-previous
+  undelete = !git z-undelete
+  
+  fhs = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && showFileHistory "$0" "$@"'
+  ch-b = !git z-ch-b
+  dt = !git z-dt
+  dt-c = !git z-dt-c
+  dt-b = !git z-dt-b
+  dt-s = !git z-dt-s
+  dt-w = !git z-dt-w
+  
+  ignored = !git ls-files . --ignored --exclude-standard --others
+  tracked = !git ls-files
+  deletes = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && showDeletes "$0" "$@"'
+
+  fetch-all = !git z-fetch-all
+  pull-all = !git z-pull-all
+  clone-btr = !git z-clone-btr
+  set-origin = !git z-set-origin
+  del-rb = !git z-del-rb
+  co-rb = !git z-co-rb
+
+  # Named with z- and called from 'normal' alias so GitTabExpansion is easier to work with
+  z-fetch-all = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && fetchAllRepositories "$0" "$@"'
+  z-pull-all = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && pullAllRepositories "$0" "$@"'
+  z-dt-w = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && differencesBetweenWDAndHead "$0" "$@"'
+  z-dt-c = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && differencesBetweenCommits "$0" "$@"'
+  z-del-rb = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && deleteRemoteBranch "$0" "$@"'
+  z-co-rb = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && checkoutRemoteBranch "$0" "$@"'
+  z-dt = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && runDiffTool "$0" "$@"'
+  z-undo = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && undoFile "$0" "$@"'
+  z-set-origin = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && setOrigin "$0" "$@"'
+  z-clone-btr = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && cloneKATRepos "$0" "$@"'
+  z-unstage-all = reset HEAD
+  z-previous = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && pullPreviousFile "$0" "$@"'
+  z-undelete = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && undeleteFile "$0" "$@"'
+  z-ch-b = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && fileChangesBetweenBranches "$0" "$@"'
+  z-dt-b = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && differencesBetweenBranches "$0" "$@"'
+  z-dt-s = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && differencesBetweenIndexAndHead "$0" "$@"'
+    
+  # http://mikewest.org/2011/04/a-quick-git-vim-workflow-tip
+  # List Files Changed in commit (if not provided, does last/HEAD) and it's previous commit
+  ch-old = !sh -c 'git show --pretty="format:" --name-only ${1-HEAD}${2+ $2} | grep -v "^$" | uniq | sed -e "s#^#`git rev-parse --show-toplevel`/#"' -
+  
+  # List Files Changed On a Commit *update help*
+  # http://stackoverflow.com/a/424142/166231
+  # Is this same thing? git show --pretty="format:" --name-status ${1-HEAD}
+  ch = !sh -c 'git show --pretty="format:" --name-status ${1-HEAD}${2+ $2}' -

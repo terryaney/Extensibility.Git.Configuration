@@ -1,0 +1,800 @@
+#!/bin/bash
+
+# Specifying file and function in external scripts - https://stackoverflow.com/a/46435987/166231
+# Passing arguments to bash scripts - https://stackoverflow.com/questions/55161288/how-to-pass-parameters-to-from-git-alias-to-external-script
+
+showFileHistory() {
+	if [ "$#" = 1 ] && ( test "$1" == "?" || test "$1" == "-?" || test "$1" == "/?" ) 
+	then	
+		showHelp="y"
+	fi
+
+	if [ "$#" = 0 ] || [ "$showHelp" = "y" ] || [ "$1" = "bash" ]
+	then
+
+		echo -e "\n Show commits where <file> is part of the commit\n"
+		echo -e " usage: git fhs <file> {#}"
+		echo -e " Defaults: \e[1;32m #\e[0m - Number of log entries, by default last 5 (git l 5)"
+
+	    if [ "$showHelp" != "y" ]
+	    then
+	    	echo -e "\n\e[1;31m Incorrect parameters provided.\e[0m"
+	    	exit 1
+	    fi
+	else
+		showMyLog -ff "$1" $2	
+	fi	
+}
+
+showMyLog() {
+	if [ "$#" = 1 ] && ( test "$1" == "?" || test "$1" == "-?" || test "$1" == "/?" )
+	then
+		echo -e "\nShow preferred KAT output format for logs.  optional parameters:\n"
+		echo -e "\e[1;32m #\e[0m - Number of log entries, by default last 5 (git l 5)"
+		echo -e "\e[1;32m graph\e[0m - Show Graph. Include the git branch graph in the output (git l 5 graph)"
+		echo -e "\e[1;32m s\e[0m - Full Subject. Include the full subject in the output, default is truncated at 80 characters (git l 5 fs)"
+		echo -e "\e[1;32m m\e[0m- Full Message. Include the full message in the output (git l 5 fm)"
+		echo -e "\e[1;32m f\e[0m - Show Files. Include listing of files affected by each commit in the output (git l 5 sf)"
+		echo -e "\e[1;32m ff <file>\e[0m - Follow file.  Only show the last # of commits where <file> is part of the commit (git l follow Test.txt)"
+	else
+		# Default parameter values
+	    graph=""
+	    entries=5
+	    subject=" %<(80,trunc)%s"
+	    body=""
+	    showFiles=""
+	    follow=""
+	    numPattern="^[+-]?[0-9]+([.][0-9]+)?$"
+
+	    # Parse all parameter values
+	    while [ $# -gt 0 ]; do 
+	      var=${1}
+
+	      if [[ $var == *graph* ]]; then 
+
+	        graph=" --graph"
+
+	      elif test "s" == "$var" || test "-s" == "$var"; then 
+
+	        subject="%n %s"
+
+	      elif test "m" == "$var" || test "-m" == "$var"; then
+
+	        body=" %+b"
+
+	      elif test "f" == "$var" || test "-f" == "$var"; then
+
+	        showFiles=" --name-only"
+
+	      elif test "ff" == "$var" || test "-ff" == "$var"; then
+
+	      	# Read next param for the file name, then remove it
+	        follow=" --follow ${2}"
+	        shift
+
+	      elif test "bash" != "$var"; then
+
+	        entries=$var
+
+	      fi
+
+	      # Remove processed param
+	      shift
+
+	    done
+
+	    echo ""
+	    pretty="%C(yellow)%h%Creset %<(15,trunc)%cn %C(dim yellow)%ad%Creset${subject}${body}"
+	    git log --pretty="format: ${pretty}" -${entries} --date=short${graph}${showFiles}${follow}
+	    exit 0
+	fi		
+}
+	
+openInBrowser() {
+	REPO_URL=$(git config remote.origin.url)
+
+    find="git@bitbucket.org:"
+    replace="https://bitbucket.org/"
+    
+    # Replace SSH with HTTPS prefix
+    REPO_URL=$(echo $REPO_URL | sed -e "s%${find}%${replace}%g")
+    explorer $REPO_URL
+    
+    exit 0;
+}
+
+undoFile() {
+	# TODO: https://stackoverflow.com/questions/55161288/how-to-pass-parameters-from-a-git-alias-to-an-external-script
+	# echo "Params: $#, this doesn't work if file is nested with in /.  See SO question"
+
+	if [ "$#" = 1 ] && ( test "$1" == "?" || test "$1" == "-?" || test "$1" == "/?" ) 
+	then	
+		showHelp="y"
+	fi
+
+	if [ "$#" -gt 1 ] || [ "$showHelp" = "y" ] || [ "$1" = "bash" ]
+	then
+		echo -e "\n Undo changes (same as \e[1;36mgit co -- <pattern>\e[0m)."
+	    echo ""
+	    echo -e " usage: git undo <pattern>"
+
+	    if test "$showHelp" != "y"
+	    then
+	    	echo -e "\n\e[1;31m Incorrect parameters provided.\e[0m"
+	    	exit 1
+	    fi
+
+	else
+
+		git checkout -- "$1"
+
+	fi
+}
+
+showDeletes() {
+	if [ "$#" = 1 ] && ( test "$1" == "?" || test "$1" == "-?" || test "$1" == "/?" )
+	then
+		echo -e " Displays all commits with files deleted from a repository with optional summary output.  optional parameters:\n"
+		echo -e "\e[1;32m d\e[0m - Show Detail. Include full commit subject/comment in the output."
+	else
+		if [ "$#" = 1 ] && ( test "$1" == "d" || test "$1" == "-d" || test "$1" == "-detail" || test "$1" == "detail" )
+		then
+			git log --diff-filter=D --summary
+		else
+			git log --diff-filter=D --summary | grep -e commit -e delete
+		fi	
+	fi	
+}
+
+runDiffTool() {
+	# Show differences between working directory and commit (index if not supplied), optionally specifying one file
+	# dt - all diffs between working directory and index
+	# dt readme.txt - readme.txt diffs between working directory and index
+	# dt readme.txt HEAD^^ - readme.txt diffs between working directory and HEAD^^
+
+	if [ "$#" = 1 ] && ( test "$1" == "?" || test "$1" == "-?" || test "$1" == "/?" )
+	then
+		echo -e " Show all diffs between working directory and index.  usage:"
+		echo -e "\e[1;36m git dt\e[0m - all diffs between working directory and index"
+		echo -e "\e[1;36m git dt readme.txt\e[0m - readme.txt diffs between working directory and index"
+		echo -e "\e[1;36m git dt readme.txt HEAD^^\e[0m - readme.txt diffs between working directory and HEAD^^"
+		
+		echoDiffToolOverview
+	else
+		# Because of way I pass in parameters, if command is called with 'nothing', then it passes 'bash' as first param
+		if test "$1" == "bash"
+		then
+			git difftool --no-prompt $2
+		else
+			git difftool --no-prompt $2 ${1+-- "$1"}
+		fi	
+	fi	
+}
+
+checkoutRemoteBranch() {
+	if [ "$#" = 2 ] 
+	then
+		git fetch
+		# ParamCount
+		git co -b $2 $1/$2
+		exit 0
+	else
+		echo -e "usage: git co-rb <origin> <branch>"
+    	echo -e "\n\e[1;31m Incorrect parameters provided.\e[0m"
+		exit 1
+	fi	
+}
+
+deleteRemoteBranch() {
+	# TODO: Don't allow $2 = current branch
+
+	if [ "$#" = 2 ] 
+	then
+		git push $1 :$2
+		git br -D $2
+		exit 0
+	else
+		echo -e "usage: git del-rb <remote> <origin> - you must provide both parameters"
+    	echo -e "\n\e[1;31m Incorrect parameters provided.\e[0m"
+		exit 1
+	fi	
+}
+
+pullPreviousFile() {
+
+	if [ "$#" = 1 ] && ( test "$1" == "?" || test "$1" == "-?" || test "$1" == "/?" ) 
+	then	
+		showHelp="y"
+	fi
+
+	if [ "$#" != 2 ] || [ "$showHelp" = "y" ]
+	then
+		echo -e "\n Pulls a file from previous commit into your working directory. usage:\n"
+	    echo -e "\e[1;36m git prev <commit> <file>\e[0m"
+	    echo -e "\e[1;36m git prev HEAD^ readme.txt\e[0m pulls readme.txt from second to last commit"
+
+	    if [ "$showHelp" != "y" ]
+	    then
+	    	echo -e "\n\e[1;31m Incorrect parameters provided.\e[0m"
+	    	exit 1
+	    fi
+
+	else
+
+		# Get previous file
+		git checkout $1 $2
+		# Move from staging into WD
+		git reset HEAD $2
+
+	fi		
+}
+
+fileChangesBetweenBranches() {
+
+	if [ "$#" = 1 ] && ( test "$1" == "?" || test "$1" == "-?" || test "$1" == "/?" ) 
+	then	
+		showHelp="y"
+	fi
+
+	if [ "$#" = 0 ] || [ "$#" -gt 2 ] || [ "$showHelp" = "y" ] || [ "$1" = "bash" ]
+	then
+
+		echo -e "\n Displays all files changed between \e[1;32mbranches\e[0m.\n"
+		echo -e " usage: git ch-b <branch1> {branch2}"
+	    echo -e " defaults: branch2 - current branch"
+
+	    if [ "$showHelp" != "y" ]
+	    then
+	    	echo -e "\n\e[1;31m Incorrect parameters provided.\e[0m"
+	    	exit 1
+	    fi
+	else
+      
+		start=${1-master}
+		end=$2
+
+		if test "" == "$2"
+		then
+			end=$(git rev-parse --abbrev-ref HEAD)
+		fi
+
+		echo "Listing file changes between $start and $end..."
+
+		git diff --name-status ${start} ${end}
+	fi	
+}
+
+undeleteFile() {
+
+	if [ "$#" = 1 ] && ( test "$1" == "?" || test "$1" == "-?" || test "$1" == "/?" ) 
+	then	
+		showHelp="y"
+	fi
+
+	if [ "$#" = 0 ] || [ "$showHelp" = "y" ] || [ "$1" = "bash" ]
+	then
+
+		echo -e "\n Recovers a file from the parent of the deleting commit.\n"
+		echo -e " usage: git undelete <filename>"
+
+	    if [ "$showHelp" != "y" ]
+	    then
+	    	echo -e "\n\e[1;31m Incorrect parameters provided.\e[0m"
+	    	exit 1
+	    fi
+	else
+
+		git checkout $(git rev-list -n 1 HEAD -- "$1")^ -- "$1"
+      
+	fi	
+}
+
+differencesBetweenBranches() {
+
+	if [ "$#" = 1 ] && ( test "$1" == "?" || test "$1" == "-?" || test "$1" == "/?" ) 
+	then	
+		showHelp="y"
+	fi
+
+	if [ "$#" != 2 ] || [ "$showHelp" = "y" ]
+	then
+
+		echo -e "\n Displays file differences between \e[1;32mbranches\e[0m. usage: git dt-b <branch> <file>\n"
+	    echo -e "\e[1;36m git dt-b FeatureBr readme.txt\e[0m displays all readme.txt diffs between \e[1;32mcurrent branch\e[0m and \e[1;32mFeatureBr\e[0m."
+
+	    if [ "$showHelp" != "y" ]
+	    then
+	    	echo -e "\n\e[1;31m Incorrect parameters provided.\e[0m"
+	    	exit 1
+	    fi
+
+	else
+
+		br=$(git rev-parse --abbrev-ref HEAD)
+		echo "Displaying Differences between $br and $1..."
+		git difftool --no-prompt $br..$1 -- "$2"
+
+	fi	
+}
+
+differencesBetweenCommits() {
+
+	if [ "$#" = 1 ] && ( test "$1" == "?" || test "$1" == "-?" || test "$1" == "/?" ) 
+	then	
+		showHelp="y"
+	fi
+
+	if [ "$#" -gt 3 ] || [ "$showHelp" = "y" ]
+	then
+		echo -e "\n Displays differences between \e[1;32mcommits\e[0m, optionally specifiying file pattern.\n"
+	    echo -e " usage:\tgit dt-c {commit1} {commit2} {pattern}"
+	    echo -e " defaults: commit1 - HEAD, commit2 - <commit1>~1, pattern - all files"
+	    echo ""
+	    echo -e " \e[1;36m git dt-c\e[0m displays all diffs between HEAD and HEAD~1"
+	    echo -e " \e[1;36m git dt-c HEAD\e[0m displays all diffs between HEAD and HEAD~1"
+	    echo -e " \e[1;36m git dt-c HEAD HEAD~2\e[0m displays all diffs between HEAD and HEAD~2"
+	    echo -e " \e[1;36m git dt-c HEAD HEAD~2 readme.txt\e[0m displays readme.txt diffs between HEAD and HEAD~2"
+
+	    if test "$showHelp" != "y"
+	    then
+	    	echo -e "\n\e[1;31m Incorrect parameters provided.\e[0m"
+	    	exit 1
+	    fi
+
+	else
+		commit1="$1"
+		if test "$1" == "bash"
+		then
+			commit1="HEAD"
+		fi
+
+		echo "Displaying Differences between $commit1 and ${2-$commit1^}..."
+		git difftool --no-prompt $commit1 ${2-$commit1^} ${3+-- "$3"}
+
+	fi	
+}
+
+differencesBetweenIndexAndHead() {
+
+	if [ "$#" = 1 ] && ( test "$1" == "?" || test "$1" == "-?" || test "$1" == "/?" ) 
+	then	
+		showHelp="y"
+	fi
+
+	if [ "$#" -gt 1 ] || [ "$showHelp" = "y" ]
+	then
+		echo -e "\n Displays differences between \e[1;32mStaging Area\e[0m and \e[1;32mMost Recent Commit\e[0m, optionally specifiying"
+		echo -e " a file pattern. Use this when you have added files with \e[1;36mgit add\e[0m and you want to see the"
+		echo -e " difference of the already added files in the \e[1;32mStaging Area\e[0m."
+	    echo ""
+	    echo -e " usage: git dt-s {pattern}"
+
+		echoDiffToolOverview
+
+	    if test "$showHelp" != "y"
+	    then
+	    	echo -e "\n\e[1;31m Incorrect parameters provided.\e[0m"
+	    	exit 1
+	    fi
+
+	else
+
+		if test "$1" == "bash"
+		then
+			git difftool --cached --no-prompt
+		else
+			git difftool --cached --no-prompt ${1+-- "$1"}
+		fi
+	
+	fi	
+}
+
+differencesBetweenWDAndHead() {
+
+	if [ "$#" = 1 ] && ( test "$1" == "?" || test "$1" == "-?" || test "$1" == "/?" ) 
+	then	
+		showHelp="y"
+	fi
+
+	if [ "$#" -gt 1 ] || [ "$showHelp" = "y" ]
+	then
+		echo -e "\n Displays differences between \e[1;32mWorking Directory\e[0m and \e[1;32mMost Recent Commit\e[0m, optionally specifiying"
+		echo -e " a file pattern. Use this when you have added files with \e[1;36mgit add\e[0m and you want to compare"
+		echo -e " your \e[1;32mWorking Directory\e[0m to \e[1;32mMost Recent Commit\e[0m."
+	    echo ""
+	    echo -e " usage: git dt-w {pattern}"
+
+		echoDiffToolOverview
+
+	    if test "$showHelp" != "y"
+	    then
+	    	echo -e "\n\e[1;31m Incorrect parameters provided.\e[0m"
+	    	exit 1
+	    fi
+
+	else
+
+		if test "$1" == "bash"
+		then
+			git difftool HEAD --no-prompt
+		else
+			git difftool HEAD --no-prompt ${1+-- "$1"}
+		fi
+	
+	fi	
+}
+
+echoDiffToolOverview() {
+    echo ""
+    echo -e " Viewing Differences "
+    echo ""
+    echo -e " Working Directory -> Staging Area -> Most Recent Commit"
+    echo -e "  | File Edits |      | stage via |     | commit |"
+    echo -e "                      |  git add  |"
+    echo ""
+    echo -e "\e[1;36m git dt\e[0m - Difference between \e[1;32mWorking Directory\e[0m and \e[1;32mStaging Area\e[0m"
+    echo -e "          (Most Recent Commit is if Staging Area is empty)"
+    echo -e "\n\e[1;36m git dt-s\e[0m - Difference between \e[1;32mStaging Area\e[0m and \e[1;32mMost Recent Commit\e[0m"
+    echo -e "            (nothing if Staging Area is empty)"
+    echo -e "\n\e[1;36m git dt-w\e[0m - Difference between \e[1;32mWorking Directory\e[0m and \e[1;32mMost Recent Commit\e[0m"
+    echo -e "            (Staging Area is ignored)"
+}
+
+function cloneKATRepos() {
+	if [ "$#" = 1 ] && ( test "$1" == "?" || test "$1" == "-?" || test "$1" == "/?" ) 
+	then	
+		showHelp="y"
+	fi
+
+	repoType=$1
+	repoName=$2
+
+	if [[ $1 != Shared* ]] && [[ $1 != Framework.* ]] && test "$showHelp" != "y" && test "$1" != "ESS" && test "$1" != "Admin" && test "$1" != "ESS.4.1" && test "$1" != "Admin.4.5" && test "$1" != \"Tahiti\"
+	then
+		badParams="y"
+	elif [[ $1 != Shared* ]] && [[ $1 != Framework.* ]] && test "$2" == ""
+	then
+		badParams="y"
+	fi
+
+	if [[ $1 != Shared* ]] && [[ $1 != Framework.* ]] && test "$showHelp" != "y" && test "$1" != "ESS" && test "$1" != "Admin" && test "$1" != "ESS.4.1" && test "$1" != "Admin.4.5" && test "$1" != \"Tahiti\"
+	then
+		badParams="y"
+	fi
+
+	if [ "$showHelp" = "y" ] || [ "$badParams" = "y" ] || [ "$1" = "bash" ]
+	then
+		echo -e "\n Clones KAT repositories into known folder structure."
+	    echo ""
+	    echo -e " usage:\tgit clone-btr <type> {clientRepoName}"
+	    echo ""
+	    echo -e "\e[1;32m type\e[0m: ESS, Admin, ESS.4.1, Admin.4.5, Tahiti, or Shared.* If starts with 'Shared', clientRepoName is not needed."
+	    echo -e "\e[1;32m clientRepoName\e[0m: If location does not start with 'Shared', this parameter is name of the client repository to clone."
+
+	    if test "$showHelp" != "y"
+	    then
+	    	echo -e "\n\e[1;31m Incorrect parameters provided.\e[0m"
+	    	exit 1
+	    fi
+
+	else
+		echo ""
+
+		if [[ $1 == Shared* ]]
+		then
+
+			if test "$1" == "Shared.Severance" || test "$1" == "Shared.Bootstrap" || test "$1" == "Shared.Admin"
+			then
+				git clone "git@bitbucket.org:benefittechnologyresources/$repoType.git" $1
+			else
+				git clone "git@bitbucket.org:benefittechnologyresources/4.1.$repoType.git" $1
+			fi
+
+		elif [[ $1 == Framework.* ]]
+		then
+
+			cloneFrameworkRepository "$1"
+
+		else
+
+	        bbRepoPrefix=$(getBitbucketRepoPrefix "$1")
+	        clientName=$(echo "$2" | awk '{print tolower($0)}')
+
+	        parentFolder=$(getClientRepoDirectoryAndCloneFramework "$1")
+
+			git clone "git@bitbucket.org:benefittechnologyresources/$bbRepoPrefix.$clientName.git" "$parentFolder/$2"
+
+			for var in "${@:3}"; do \
+				repo=$(echo "$var" | awk '{print tolower($0)}')
+				
+				if test "$var" == "Shared.Severance" || test "$var" == "Shared.Bootstrap" || test "$var" == "Shared.Admin"
+				then
+				
+					git clone "git@bitbucket.org:benefittechnologyresources/$repo.git" "$parentFolder/$2/$var"
+				
+				else
+					git clone "git@bitbucket.org:benefittechnologyresources/4.1.$repo.git" "$parentFolder/$2/$var"
+				fi
+			done
+
+			# TODO: Can't perform cd b/c this is ran in a 'sub shell' https://stackoverflow.com/a/255415/166231
+			# Asked question here: https://stackoverflow.com/a/46698535/166231
+			cd $parentFolder/$2
+		fi
+
+	fi
+}
+
+getBitbucketRepoPrefix() {
+
+	repoName=""
+
+	if test "ESS" == "$1"; then
+		repoName="ESS"
+	elif test "ESS.4.1" == "$1"; then
+		repoName="4.1"
+	elif test "Admin" == "$1"; then
+		repoName="Admin"
+	elif test "Admin.4.5" == "$1"; then
+		repoName="4.5"
+	elif test "Tahiti" == "$1"; then
+		repoName="Tahiti"
+	elif test "$1" == "Shared.Severance" || test "$1" == "Shared.Bootstrap" || test "$1" == "Shared.Admin"; then
+		repoName="$1"
+	elif [[ $1 == Shared* ]]; then
+		repoName="4.1.$1"
+	else
+		repoName="$1"
+	fi
+
+	echo "$repoName" | awk '{print tolower($0)}'
+}
+
+getClientRepoDirectoryAndCloneFramework() {
+
+	clientRepoDir=""
+	
+	if test "ESS" = "$1"
+	then
+
+		if [ ! -d "C:/BTR/Evolution" ] 
+		then
+			cloneFrameworkRepository "Framework.Evolution"
+		fi
+		clientRepoDir="c:/BTR/Evolution/Websites/ESS"
+	
+	elif test "Admin" = "$1"
+	then
+
+		if [ ! -d "C:/BTR/Evolution" ]
+		then
+			cloneFrameworkRepository "Framework.Evolution"
+		fi
+		clientRepoDir="c:/BTR/Evolution/Websites/Admin"
+	
+	elif test "ESS.4.1" = "$1" 
+	then
+	
+		if [ ! -d "C:/BTR.Legacy/MadHatter.4.1" ]
+		then
+			cloneFrameworkRepository "Framework.4.1"
+		fi
+		clientRepoDir="C:/BTR.Legacy/MadHatter.4.1/Websites/ESS"
+	
+	elif test "Admin.4.5" = "$1"
+	then
+	
+		if [ ! -d "C:/BTR.Legacy/MadHatter.4.5" ]
+		then
+			cloneFrameworkRepository "Framework.4.5"
+		fi
+		clientRepoDir="C:/BTR.Legacy/MadHatter.4.5/Websites.MadHatterAdmin/Clients"
+	
+	elif test "Tahiti" = "$1" 
+	then
+
+		if [ ! -d "C:/BTR.Legacy/Tahiti" ]
+		then
+			cloneFrameworkRepository "Framework.Tahiti"
+		fi
+		clientRepoDir="c:/BTR.Legacy/Tahiti/BTR.Websites.MadHatter/Clients"
+
+	fi
+	echo "$clientRepoDir"
+}
+
+cloneFrameworkRepository() {
+
+	if test "Framework.4.1" = "$1"
+	then
+
+	    git clone "git@bitbucket.org:benefittechnologyresources/btr.madhatter.4.1" "C:/BTR.Legacy/MadHatter.4.1"; \
+	    
+	    mkdir -p "C:/BTR.Legacy/MadHatter.4.1/Websites/ESS"; \
+	    attrib -r "C:/BTR.Legacy/MadHatter.4.1/Websites/ESS"; \
+	    mkdir -p "C:/BTR.Legacy/MadHatter.4.1/Assemblies"; \
+	    attrib -r "C:/BTR.Legacy/MadHatter.4.1/Assemblies"; \
+
+	    cd "C:/BTR.Legacy/MadHatter.4.1"
+	
+	elif test "Framework.4.5" = "$1"
+	then
+
+	    git clone "git@bitbucket.org:benefittechnologyresources/btr.madhatter.4.5" "C:/BTR.Legacy/MadHatter.4.5"
+
+	    mkdir -p "C:/BTR.Legacy/MadHatter.4.5/Websites.MadHatterAdmin/Clients"
+	    attrib -r "C:/BTR.Legacy/MadHatter.4.5/Websites.MadHatterAdmin/Clients"
+	    mkdir -p "C:/BTR.Legacy/MadHatter.4.5/Assemblies"
+	    attrib -r "C:/BTR.Legacy/MadHatter.4.5/Assemblies"
+
+	    cd "C:/BTR.Legacy/MadHatter.4.5"
+	
+	elif test "Framework.Tahiti" = "$1"
+	then
+
+	    git clone "git@bitbucket.org:benefittechnologyresources/btr.tahiti" "C:/BTR.Legacy/Tahiti"
+
+	    mkdir -p "C:/BTR.Legacy/Tahiti/BTR.Websites.MadHatter/Clients"
+	    attrib -r "C:/BTR.Legacy/Tahiti/BTR.Websites.MadHatter/Clients"
+	    mkdir -p "C:/BTR.Legacy/Tahiti/Assemblies"
+	    attrib -r "C:/BTR.Legacy/Tahiti/Assemblies"
+
+	    cd "C:/BTR.Legacy/Tahiti"
+
+	elif test "Framework.Evolution" = "$1"
+	then
+
+	    git clone "git@bitbucket.org:benefittechnologyresources/btr.evolution" "C:/BTR/Evolution"
+	    git clone "git@bitbucket.org:benefittechnologyresources/btr.evolution.rble" "C:/BTR/Evolution/BTR.Evolution.RBLe"
+	    git clone "git@bitbucket.org:benefittechnologyresources/btr.evolution.service" "C:/BTR/Evolution/BTR.Evolution.Service"
+
+	    mkdir -p "C:/BTR/Evolution/Websites/ESS"
+	    attrib -r "C:/BTR/Evolution/Websites/ESS"
+	    mkdir -p "C:/BTR/Evolution/Websites/Admin"
+	    attrib -r "C:/BTR/Evolution/Websites/Admin"
+
+	    if [ ! -d "C:/BTR/Assemblies" ]
+	    then
+			mkdir -p "C:/BTR/Assemblies"
+			attrib -r "C:/BTR/Assemblies"
+	    fi
+
+	    cd "C:/BTR/Evolution"
+	fi
+}
+
+pullAllRepositories() {
+	name=$(basename "$PWD")
+	echo -e "\nPulling $name..."
+
+	git pull
+
+	for i in Shared* ; do
+		if [ -d "$i" ]; then
+			cd "$i"
+			echo -e "\nPulling $i..."
+			git pull
+			cd ..
+		fi
+	done
+}
+fetchAllRepositories() {
+	name=$(basename "$PWD")
+	echo -e "\nFetching $name..."
+
+	git remote update
+
+	for i in Shared* ; do
+		if [ -d "$i" ]; then
+			cd "$i"
+			echo -e "\nFetching $i..."
+			git remote update
+			cd ..
+		fi
+	done
+}
+
+#Sets defaults on origin master so that git pull, git push don't need remote/branch in command line.
+setOrigin () {
+	
+	if [ "$#" = 1 ] && ( test "$1" == "?" || test "$1" == "-?" || test "$1" == "/?" ) 
+	then	
+		showHelp="y"
+	fi
+	if [[ $1 != Shared* ]] && [[ $1 != Framework.* ]] && test "$showHelp" != "y" && test "$1" != "ESS" && test "$1" != "Admin" && test "$1" != "ESS.4.1" && test "$1" != "Admin.4.5" && test "$1" != \"Tahiti\"
+	then
+		badParams="y"
+	fi
+
+	if [ "$#" -gt 1 ] || [ "$showHelp" = "y" ] || [ "$badParams" = "y" ] || [ "$1" = "bash" ]
+	then
+		echo -e "\n Updates configuration to a known bitbucket repository."
+	    echo ""
+	    echo -e " usage:\tgit set-origin <type>"
+	    echo ""
+	    echo -e "\e[1;32m type\e[0m: ESS, Admin, ESS.4.1, Admin.4.5, Tahiti, or Shared.* If starts with 'Shared', clientRepoName is not needed."
+
+	    if test "$showHelp" != "y"
+	    then
+	    	echo -e "\n\e[1;31m Incorrect parameters provided.\e[0m"
+	    	exit 1
+	    fi
+
+	else
+		echo ""
+
+		bbPrefix=$(getBitbucketRepoPrefix "$1")
+
+		if [[ $1 == Shared* ]]; then \
+	
+			git remote remove origin
+			git remote add origin "git@bitbucket.org:benefittechnologyresources/$bbPrefix.git"
+
+			echo "origin set to git@bitbucket.org:benefittechnologyresources/$bbPrefix.git"
+	
+		else \
+	
+			clientName=$(echo "${2-${PWD##*/}}" | awk '{print tolower($0)}')
+	
+			git remote remove origin
+			git remote add origin "git@bitbucket.org:benefittechnologyresources/$bbPrefix.$clientName.git"
+
+			echo "origin set to git@bitbucket.org:benefittechnologyresources/$bbPrefix.$clientName.git"
+
+		fi
+
+		git config branch.master.remote origin
+		git config branch.master.merge refs/heads/master
+	fi
+}
+
+showAliases() {
+	# \e[1;31m ... \e[0m - Red font
+
+    echo ""
+    echo -e "\e[1;31m Common Git Abbreviations and Helpers\e[0m"
+    echo -e " \e[1;36m browse/open\e[0m = view the current repository on bitbucket.com"
+    echo -e " \e[1;36m ac\e[0m = add all files to staging & commit"
+    echo -e " \e[1;36m br\e[0m = branch"
+    echo -e " \e[1;36m co\e[0m = checkout (branch)"
+    echo -e " \e[1;36m com\e[0m = commit"
+    echo -e " \e[1;36m commend\e[0m = before pushing, add files to last commit and update message"
+    echo -e " \e[1;36m l\e[0m = KAT log display (\e[1;36mgit l /?\e[0m for details)"
+    echo -e " \e[1;36m st\e[0m = condensed status display (similar to \e[1;36mgit status\e[0m)"
+
+    echo ""
+    echo -e "\e[1;31m File Change Helpers\e[0m"
+    echo -e " \e[1;36m undo <pattern>\e[0m = undo changes (same as \e[1;36mgit co -- <pattern>\e[0m)"
+    echo -e " \e[1;36m undo-all\e[0m = undo *all* changes (same as \e[1;36mgit reset --hard HEAD\e[0m)"
+    echo -e " \e[1;36m unstage <pattern>\e[0m = removes files from the Staged area (same as \e[1;36mgit reset -- <pattern>\e[0m)"
+    echo -e " \e[1;36m unstage-all\e[0m = removes *ALL* files from the Staged area (same as \e[1;36mgit reset HEAD\e[0m)"
+    echo -e " \e[1;36m previous/prev <commit> <file>\e[0m: Pulls a file from previous commit into your working directory."; \
+    echo -e " \e[1;36m undelete <file>\e[0m: Recovers a file from the parent of the deleting commit."; \
+
+    echo ""
+    echo -e "\e[1;31m Advanced File Change Helpers\e[0m"
+    echo -e " \e[1;36m fhs <file> <#>\e[0m: Displays all commits for the specified file (\e[1;36mgit fhs /?\e[0m for help)."
+    echo -e " \e[1;36m ch <commit> <commit>\e[0m: Displays files changed between specified commits (\e[1;36mgit ch /?\e[0m for help)."
+    echo -e " \e[1;36m ch-b <branch> {branch}\e[0m: Displays files changed between specified branches (\e[1;36mgit ch-b /?\e[0m for help)."
+    echo -e " \e[1;36m dt <pattern>\e[0m: Displays differences for files (\e[1;36mgit dt /?\e[0m for parameters/details)."
+    echo -e " \e[1;36m dt-c\e[0m: Displays differences between \e[1;32mcommits\e[0m (\e[1;36mgit dt-c /?\e[0m for help)."
+    echo -e " \e[1;36m dt-b\e[0m: Displays file differences between \e[1;32mbranches\e[0m."
+    echo -e " \e[1;36m dt-s\e[0m: Displays differences between \e[1;32mindex/staging area\e[0m and \e[1;32mHEAD\e[0m (\e[1;36mgit dt-s /?\e[0m for help)."
+    echo -e " \e[1;36m dt-w\e[0m: Displays differences between \e[1;32mworking directory\e[0m and \e[1;32mHEAD\e[0m, (\e[1;36mgit dt-w /?\e[0m for help)."
+
+    echo ""
+    echo -e "\e[1;31m Repository Helpers\e[0m"
+    echo -e " \e[1;36m pull-all\e[0m: Pull all repositories, merging changes in (including /Shared* repositories)."
+    echo -e " \e[1;36m fetch-all\e[0m: Pull all repository info, without merging (including /Shared* repositories)."
+    echo -e " \e[1;36m clone-btr <type> <name>\e[0m: Clones a KAT repository (\e[1;36mgit clone-btr /?\e[0m for help)."
+    echo -e " \e[1;36m set-origin <type>\e[0m: Updates KAT repository configuration (\e[1;36mgit set-origin /?\e[0m for help)."
+    echo -e " \e[1;36m co-rb <remote> <branch>\e[0m: Pulls a remote branch and switches to it for editing."; \
+    echo -e " \e[1;36m del-rb <remote> <branch>\e[0m: Deletes both the local and remote branches."; \
+
+    echo ""
+    echo -e "\e[1;31m Repository Detail Helpers\e[0m"
+    echo -e " \e[1;36m tracked\e[0m: Displays files tracked in a repository."
+    echo -e " \e[1;36m ignored\e[0m: Displays files not tracked in a repository."
+    echo -e " \e[1;36m deletes\e[0m: Displays commits with files deleted from a repository (\e[1;36mgit deletes /?\e[0m for help)."
+
+}
