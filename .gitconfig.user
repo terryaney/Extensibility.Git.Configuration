@@ -1,0 +1,13 @@
+[user]
+	email = terry.aney@charter.net
+	name = Terry Aney
+
+[core]
+  # editor = notepad
+  editor = "'c:/program files/sublime text 3/sublime_text.exe' -w"
+
+# Set up default diff tool
+[diff]
+  # tool = bc3
+  tool = diffmerge
+  # tool = submlimemerge
