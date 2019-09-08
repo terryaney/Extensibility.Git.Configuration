@@ -98,6 +98,14 @@ openInBrowser() {
     
     # Replace SSH with HTTPS prefix
     REPO_URL=$(echo $REPO_URL | sed -e "s%${find}%${replace}%g")
+
+
+    find=".git"
+    replace="/commits"
+    
+    # Replace SSH with HTTPS prefix
+    REPO_URL=$(echo $REPO_URL | sed -e "s%${find}%${replace}%g")
+
     explorer $REPO_URL
     
     exit 0;
@@ -483,7 +491,7 @@ function cloneKATRepos() {
 		if [[ $1 == Shared* ]]
 		then
 
-			if test "$1" == "Shared.Severance" || test "$1" == "Shared.Bootstrap" || test "$1" == "Shared.Admin"
+			if test "$1" == "Shared.Severance" || test "$1" == "Shared.Bootstrap" || test "$1" == "Shared.Bootstrap.Core" || test "$1" == "Shared.Bootstrap.Admin"
 			then
 				git clone "git@bitbucket.org:benefittechnologyresources/$repoType.git" $1
 			else
@@ -507,7 +515,7 @@ function cloneKATRepos() {
 			for var in "${@:3}"; do \
 				repo=$(echo "$var" | awk '{print tolower($0)}')
 				
-				if test "$var" == "Shared.Severance" || test "$var" == "Shared.Bootstrap" || test "$var" == "Shared.Admin"
+				if test "$var" == "Shared.Severance" || test "$var" == "Shared.Bootstrap" || test "$var" == "Shared.Bootstrap.Core" || test "$var" == "Shared.Bootstrap.Admin"
 				then
 				
 					git clone "git@bitbucket.org:benefittechnologyresources/$repo.git" "$parentFolder/$2/$var"
@@ -539,7 +547,7 @@ getBitbucketRepoPrefix() {
 		repoName="4.5"
 	elif test "Tahiti" == "$1"; then
 		repoName="Tahiti"
-	elif test "$1" == "Shared.Severance" || test "$1" == "Shared.Bootstrap" || test "$1" == "Shared.Admin"; then
+	elif test "$1" == "Shared.Severance" || test "$1" == "Shared.Bootstrap" || test "$1" == "Shared.Bootstrap.Core" || test "$1" == "Shared.Bootstrap.Admin"; then
 		repoName="$1"
 	elif [[ $1 == Shared* ]]; then
 		repoName="4.1.$1"
