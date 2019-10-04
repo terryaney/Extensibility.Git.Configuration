@@ -714,7 +714,7 @@ setOrigin () {
 		badParams="y"
 	fi
 
-	if [ "$#" -gt 1 ] || [ "$showHelp" = "y" ] || [ "$badParams" = "y" ] || [ "$1" = "bash" ]
+	if [ "$#" -gt 2 ] || [ "$showHelp" = "y" ] || [ "$badParams" = "y" ] || [ "$1" = "bash" ]
 	then
 		echo -e "\n Updates configuration to a known bitbucket repository."
 	    echo ""
@@ -724,7 +724,7 @@ setOrigin () {
 
 	    if test "$showHelp" != "y"
 	    then
-	    	echo -e "\n\e[1;31m Incorrect parameters provided.\e[0m"
+	    	echo -e "\n\e[1;31m Incorrect parameters provided.  type provided was '$1'.  Param count was $#.\e[0m"
 	    	exit 1
 	    fi
 
