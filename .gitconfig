@@ -7,7 +7,7 @@
   excludesfile = ~/.gitignore
   # https://stackoverflow.com/questions/10418975/how-to-change-line-ending-settings
   # https://stackoverflow.com/questions/5834014/lf-will-be-replaced-by-crlf-in-git-what-is-that-and-is-it-important
-  autocrlf = false
+  autocrlf = true
 
 [push]
   # only push to the remote branch *being tracked* by local branch, if no tracking specified, it will refuse the push
