@@ -40,7 +40,7 @@ showMyLog() {
 		# Default parameter values
 	    graph=""
 	    entries=5
-	    subject=" %<(80,trunc)%s"
+	    subject=" %<(160,trunc)%s"
 	    body=""
 	    showFiles=""
 	    follow=""
