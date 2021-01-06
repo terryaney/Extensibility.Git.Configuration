@@ -139,6 +139,22 @@ undoFile() {
 	fi
 }
 
+showIgnored() {
+	# https://www.iditect.com/how-to/57136185.html (his 'My Kung-Fu' comment)
+	if [ "$#" = 1 ] && ( test "$1" == "?" || test "$1" == "-?" || test "$1" == "/?" )
+	then
+		echo -e " Displays all files ignored in the repository with optional summary output.  optional parameters:\n"
+		echo -e "\e[1;32m f\e[0m - Show files.  Instead of just showing directories, show each file as well."
+	else
+		if [ "$#" = 1 ] && ( test "$1" == "f" || test "$1" == "-f" || test "$1" == "-files" || test "$1" == "file" )
+		then
+			find . -type f | grep -v .git | awk '{print $1}' | git check-ignore -v --stdin
+		else
+			find . -type d | grep -v .git | awk '{print $1"/"}' | git check-ignore -v --stdin
+		fi	
+	fi	
+}
+
 showDeletes() {
 	if [ "$#" = 1 ] && ( test "$1" == "?" || test "$1" == "-?" || test "$1" == "/?" )
 	then
