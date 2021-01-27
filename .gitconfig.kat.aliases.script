@@ -143,15 +143,47 @@ showIgnored() {
 	# https://www.iditect.com/how-to/57136185.html (his 'My Kung-Fu' comment)
 	if [ "$#" = 1 ] && ( test "$1" == "?" || test "$1" == "-?" || test "$1" == "/?" )
 	then
-		echo -e " Displays all files ignored in the repository with optional summary output.  optional parameters:\n"
-		echo -e "\e[1;32m f\e[0m - Show files.  Instead of just showing directories, show each file as well."
+		echo -e "\n Displays all directories ignored in the repository with optional summary output.  optional parameters:\n"
+		echo -e "\e[1;32m <path>\e[0m - Show reason a specific file or directory is ignored"
 	else
-		if [ "$#" = 1 ] && ( test "$1" == "f" || test "$1" == "-f" || test "$1" == "-files" || test "$1" == "file" )
+		# Directories already reported
+		directories=()
+
+		# If <path> passed in, check for it specifically (not sure why 'bash' is passed in if you run the command with no params)
+		if [ "$#" = 1 ] && test "$1" != "bash"
 		then
-			find . -type f | grep -v .git | awk '{print $1}' | git check-ignore -v --stdin
+			ignores=$(git check-ignore -v "$1")
+
+			if [ ${#ignores[@]} = 0 ] || test "${ignores[0]}" == ""
+			then
+				echo "$1 is not ignored"
+			fi
 		else
-			find . -type d | grep -v .git | awk '{print $1"/"}' | git check-ignore -v --stdin
+			ignores=$(find . -type d | git check-ignore -v --stdin)
 		fi	
+
+		while read i
+		do 
+			parts=($i)
+			include="1"
+
+			for value in "${directories[@]}"
+			do
+				# If current directory from check-ignore starts with already reported directory, skip it
+				if [[ ${parts[1]} == ${value}* ]]
+				then
+					include="0"
+					break
+				fi
+			done
+
+			if test "$include" = "1" && test "$i" != ""
+			then			
+				directories+=("${parts[1]}")
+				echo "$i"
+			fi	
+
+		done <<< "$ignores"
 	fi	
 }
 
