@@ -159,7 +159,7 @@ showIgnored() {
 				echo "$1 is not ignored"
 			fi
 		else
-			ignores=$(find . -type d | git check-ignore -v --stdin)
+			ignores=$(find . | git check-ignore -v --stdin)
 		fi	
 
 		while read i

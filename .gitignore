@@ -53,3 +53,6 @@ Functions/
 Shared*/
 !**/Views/Shared*/
 !.gitconfig.user
+
+# Nexgen / .NET Core
+connectionStrings.*json
