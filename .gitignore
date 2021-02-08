@@ -54,5 +54,5 @@ Shared*/
 !**/Views/Shared*/
 !.gitconfig.user
 
-# Nexgen / .NET Core
-connectionStrings.*json
+# Camelot / .NET Core
+secrets.*.json
