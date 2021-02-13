@@ -36,9 +36,10 @@
   dt-s = !git z-dt-s
   dt-w = !git z-dt-w
   
-  ignored = !git ls-files . --ignored --exclude-standard --others
   tracked = !git ls-files
   deletes = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && showDeletes "$0" "$@"'
+  ignored = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && showIgnored "$0" "$@"'
+  #ignored = !git ls-files . --ignored --exclude-standard --others
 
   fetch-all = !git z-fetch-all
   pull-all = !git z-pull-all
