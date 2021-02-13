@@ -17,6 +17,7 @@
   st = status --short --branch
   l = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && showMyLog "$0" "$@"'
 
+  u = undo
   undo = !git z-undo
   undo-all = reset --hard HEAD
   unstage = reset HEAD --
@@ -24,6 +25,8 @@
   prev = !git z-previous
   prev = !git z-previous
   undelete = !git z-undelete
+  rf = remove-file
+  remove-file = !git z-remove-file
   
   fhs = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && showFileHistory "$0" "$@"'
   ch-b = !git z-ch-b
@@ -33,10 +36,9 @@
   dt-s = !git z-dt-s
   dt-w = !git z-dt-w
   
+  ignored = !git ls-files . --ignored --exclude-standard --others
   tracked = !git ls-files
   deletes = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && showDeletes "$0" "$@"'
-  ignored = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && showIgnored "$0" "$@"'
-  #ignored = !git ls-files . --ignored --exclude-standard --others
 
   fetch-all = !git z-fetch-all
   pull-all = !git z-pull-all
@@ -62,7 +64,8 @@
   z-ch-b = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && fileChangesBetweenBranches "$0" "$@"'
   z-dt-b = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && differencesBetweenBranches "$0" "$@"'
   z-dt-s = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && differencesBetweenIndexAndHead "$0" "$@"'
-    
+  z-remove-file = !sh -c 'git rm --cached "$0"'
+
   # http://mikewest.org/2011/04/a-quick-git-vim-workflow-tip
   # List Files Changed in commit (if not provided, does last/HEAD) and it's previous commit
   ch-old = !sh -c 'git show --pretty="format:" --name-only ${1-HEAD}${2+ $2} | grep -v "^$" | uniq | sed -e "s#^#`git rev-parse --show-toplevel`/#"' -

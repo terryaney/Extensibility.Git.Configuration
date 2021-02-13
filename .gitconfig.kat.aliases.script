@@ -820,7 +820,7 @@ showAliases() {
 
     echo ""
     echo -e "\e[1;31m File Change Helpers\e[0m"
-    echo -e " \e[1;36m undo <pattern>\e[0m = undo changes (same as \e[1;36mgit co -- <pattern>\e[0m)"
+    echo -e " \e[1;36m u, undo <pattern>\e[0m = undo changes (same as \e[1;36mgit co -- <pattern>\e[0m)"
     echo -e " \e[1;36m undo-all\e[0m = undo *all* changes (same as \e[1;36mgit reset --hard HEAD\e[0m)"
     echo -e " \e[1;36m unstage <pattern>\e[0m = removes files from the Staged area (same as \e[1;36mgit reset -- <pattern>\e[0m)"
     echo -e " \e[1;36m unstage-all\e[0m = removes *ALL* files from the Staged area (same as \e[1;36mgit reset HEAD\e[0m)"
@@ -852,5 +852,6 @@ showAliases() {
     echo -e " \e[1;36m tracked\e[0m: Displays files tracked in a repository."
     echo -e " \e[1;36m ignored\e[0m: Displays files not tracked in a repository."
     echo -e " \e[1;36m deletes\e[0m: Displays commits with files deleted from a repository (\e[1;36mgit deletes /?\e[0m for help)."
+    echo -e " \e[1;36m rf, remove-file\e[0m: Removes file from repository tracking (i.e. file newly added to .gitignore)."
 
 }
