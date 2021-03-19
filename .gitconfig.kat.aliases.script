@@ -306,7 +306,7 @@ fileChangesBetweenBranches() {
 	    fi
 	else
       
-		start=${1-master}
+		start=${1-main}
 		end=$2
 
 		if test "" == "$2"
@@ -750,7 +750,7 @@ fetchAllRepositories() {
 	done
 }
 
-#Sets defaults on origin master so that git pull, git push don't need remote/branch in command line.
+#Sets defaults on origin main so that git pull, git push don't need remote/branch in command line.
 setOrigin () {
 	
 	if [ "$#" = 1 ] && ( test "$1" == "?" || test "$1" == "-?" || test "$1" == "/?" ) 
@@ -799,8 +799,8 @@ setOrigin () {
 
 		fi
 
-		git config branch.master.remote origin
-		git config branch.master.merge refs/heads/master
+		git config branch.main.remote origin
+		git config branch.main.merge refs/heads/main
 	fi
 }
 
