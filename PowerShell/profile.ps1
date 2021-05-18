@@ -1,7 +1,10 @@
 ﻿# https://github.com/dahlbyk/posh-git#installing-posh-git-via-powershellget-on-linux-macos-and-windows (need to run in Powershell)
 
-. (Resolve-Path ~/Documents/WindowsPowershell/editor.ps1)
-. (Resolve-Path ~/Documents/WindowsPowershell/profile.promptsettings.ps1)
+# Just a seperate file for an edit function that will be mapped to alias 'e'.
+# Wanted it seperate in case other BTR developers wanted to use a different editor
+# they could grab all my files in WindowsPowershell except this.
+. (Resolve-Path ~/OneDrive/Documents/WindowsPowershell/editor.ps1)
+. (Resolve-Path ~/OneDrive/Documents/WindowsPowershell/profile.promptsettings.ps1)
 
 Set-Alias e edit
 Set-Alias ex explorer
