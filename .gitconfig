@@ -20,6 +20,8 @@
 
 [branch "master"]
   rebase = true
+[branch "main"]
+  rebase = true
 
 [merge]
   # Always merge with --no-ff
@@ -50,6 +52,11 @@
 
 [difftool "submlimemerge"]
   cmd = 'C:/Program Files/Sublime Merge/sublime_merge.exe' \"$LOCAL\" \"$REMOTE\"
+
+[difftool "vscode"]
+  cmd = code --wait --diff $LOCAL $REMOTE
+[mergetool "vscode"]
+  cmd = code --wait $MERGED
 
 # Merge Tool - I don't use this, I always just use text editor, but leaving settings in to show how to configure diffmerge
 #[merge]
