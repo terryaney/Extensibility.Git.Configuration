@@ -32,15 +32,18 @@ showMyLog() {
 		echo -e "\nShow preferred KAT output format for logs.  optional parameters:\n"
 		echo -e "\e[1;32m #\e[0m - Number of log entries, by default last 5 (git l 5)"
 		echo -e "\e[1;32m graph\e[0m - Show Graph. Include the git branch graph in the output (git l 5 graph)"
-		echo -e "\e[1;32m s\e[0m - Full Subject. Include the full subject in the output, default is truncated at 80 characters (git l 5 fs)"
-		echo -e "\e[1;32m m\e[0m- Full Message. Include the full message in the output (git l 5 fm)"
-		echo -e "\e[1;32m f\e[0m - Show Files. Include listing of files affected by each commit in the output (git l 5 sf)"
-		echo -e "\e[1;32m ff <file>\e[0m - Follow file.  Only show the last # of commits where <file> is part of the commit (git l follow Test.txt)"
+		echo -e "\e[1;32m s\e[0m - Full Subject. Include the full subject in the output, default is truncated at 100 characters (git l 5 s)"
+		echo -e "\e[1;32m m\e[0m- Full Message. Include the full message in the output (git l 5 m)"
+		echo -e "\e[1;32m f\e[0m - Show Files. Include listing of files affected by each commit in the output (git l 5 f)"
+		echo -e "\e[1;32m ff <file>\e[0m - Follow file.  Only show the last # of commits where <file> is part of the commit (git l ff Test.txt)"
+		echo -e ""
+		echo -e "\e[1;32m Combine Parameters\e[0m - Combine parameters by placing space between parameters.  (git l s f)"
+		echo -e "\e[1;32m Notes\e[0m - Parameters can be prefixed with - as well (git l -s -f).  Can use full names as well. s(ubject), m(essage), f(iles) or follow (for ff)."
 	else
 		# Default parameter values
 	    graph=""
 	    entries=5
-	    subject=" %<(160,trunc)%s"
+	    subject=" %<(100,trunc)%s"
 	    body=""
 	    showFiles=""
 	    follow=""
@@ -50,23 +53,24 @@ showMyLog() {
 	    while [ $# -gt 0 ]; do 
 	      var=${1}
 
-	      if [[ $var == *graph* ]]; then 
+	      if test "graph" == "$var" || test "g" == "$var" || test "-g" == "$var" || test "-graph" == "$var"; then 
 
 	        graph=" --graph"
 
-	      elif test "s" == "$var" || test "-s" == "$var"; then 
+	      elif test "s" == "$var" || test "-s" == "$var" || test "subject" == "$var" || test "-subject" == "$var"; then 
 
 	        subject="%n %s"
 
-	      elif test "m" == "$var" || test "-m" == "$var"; then
+	      elif test "m" == "$var" || test "-m" == "$var" || test "message" == "$var" || test "-message" == "$var"; then
 
+			# linefeed, then body
 	        body=" %+b"
 
-	      elif test "f" == "$var" || test "-f" == "$var"; then
+	      elif test "f" == "$var" || test "-f" == "$var" || test "files" == "$var" || test "-files" == "$var"; then
 
 	        showFiles=" --name-only"
 
-	      elif test "ff" == "$var" || test "-ff" == "$var"; then
+	      elif test "ff" == "$var" || test "-ff" == "$var" || test "follow" == "$var" || test "-follow" == "$var"; then
 
 	      	# Read next param for the file name, then remove it
 	        follow=" --follow ${2}"
@@ -85,7 +89,8 @@ showMyLog() {
 
 	    echo ""
 	    pretty="%C(yellow)%h%Creset %<(15,trunc)%cn %C(dim yellow)%ad%Creset${subject}${body}"
-	    git log --pretty="format: ${pretty}" -${entries} --date=short${graph}${showFiles}${follow}
+		# echo "--pretty=\"format:${pretty}\" -${entries} --date=short${graph}${showFiles}${follow}"
+	    git log --pretty="format:${pretty}" -${entries} --date=short${graph}${showFiles}${follow}
 	    exit 0
 	fi		
 }
