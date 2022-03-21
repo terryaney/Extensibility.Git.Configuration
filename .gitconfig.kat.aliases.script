@@ -255,7 +255,7 @@ deleteRemoteBranch() {
 		git br -D $2
 		exit 0
 	else
-		echo -e "usage: git del-rb <remote> <origin> - you must provide both parameters"
+		echo -e "usage: git del-rb <remote> <branch> - you must provide both parameters"
     	echo -e "\n\e[1;31m Incorrect parameters provided.\e[0m"
 		exit 1
 	fi	
