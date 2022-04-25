@@ -43,7 +43,7 @@ showMyLog() {
 		# Default parameter values
 	    graph=""
 	    entries=5
-	    subject=" %<(100,trunc)%s"
+	    subject=" %<(90,trunc)%s"
 	    body=""
 	    showFiles=""
 	    follow=""
@@ -821,8 +821,8 @@ showAliases() {
 
     echo ""
     echo -e "\e[1;31m Common Git Abbreviations and Helpers\e[0m"
-    echo -e " \e[1;36m browse/open\e[0m = view the current repository on Conduent TFS"
-    echo -e " \e[1;36m browse-bb/open-bb\e[0m = view the current repository on bitbucket.com"
+    echo -e " \e[1;36m tfs/browse\e[0m = view the current repository on Conduent TFS"
+    echo -e " \e[1;36m bb/browse-bb\e[0m = view the current repository on bitbucket.com"
     echo -e " \e[1;36m ac\e[0m = add all files to staging & commit"
     echo -e " \e[1;36m br\e[0m = branch"
     echo -e " \e[1;36m co\e[0m = checkout (branch)"
