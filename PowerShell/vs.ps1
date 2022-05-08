@@ -31,6 +31,9 @@ if ($basePath -eq "") {
 
 # Test to see if it's installed
 if ((test-path $basePath) -eq $false) {
+    $basePath = join-path (join-path ${env:ProgramFiles} "Microsoft Visual Studio") $version
+}
+if ((test-path $basePath) -eq $false) {
     write-warning "Visual Studio $version is not installed in '$basePath'."
     exit 1
 }
@@ -46,7 +49,7 @@ if ($edition -eq "") {
         write-warning "Multiple editions of Visual Studio $version are installed. Please specify one of the editions ($($editions -join ', ')) with the -edition switch."
         exit 1
     }
-    $edition = $editions[0]
+    $edition = $editions[0].Name
 }
 
 # Find VsDevCmd.bat
@@ -88,4 +91,4 @@ if ($noWeb -eq $false) {
 }
 
 # Set the prompt environment variable (printed in our prompt function)
-$global:PromptEnvironment = "$($PromptSettings.BeforeVSEnvironmentText)$version "
+$global:VSPromptEnvironment = "$version"
