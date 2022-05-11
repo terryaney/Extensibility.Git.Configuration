@@ -7,10 +7,10 @@
   # https://stackoverflow.com/questions/46695859/should-i-use-sh-c-or-f-f-in-git-alias-scripts/46698535?noredirect=1#comment97121794_46698535
   aliases = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && showAliases "$0" "$@"'
 
-  open-bb = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && openBitbucketInBrowser'  
-  browse-bb = !git open-bb
-  open = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && openTFSInBrowser'  
-  browse = !git open-tfs
+  bb = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && openBitbucketInBrowser'  
+  browse-bb = !git bb
+  tfs = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && openTFSInBrowser'  
+  browse = !git tfs
   ac = !git add -A && git commit -m 
   br = branch
   co = checkout

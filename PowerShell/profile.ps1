@@ -281,11 +281,26 @@ function Write-PromptSegment {
     $isDesktop = ($PSVersionTable.PSEdition -eq "Desktop")
     Write-Powerline $Background $PrevBackground
 
+    $executionTime = ""
+    $history = ( Get-History -Count 1  )
+    
+    if ( $history.Count -eq 1  )
+    {
+        if ( $history.Duration.TotalMilliseconds -gt 1000 )
+        {
+            $executionTime = " $([char]0xf608) {0:0.0}s" -f $history.Duration.TotalSeconds
+        }
+        else
+        {
+            $executionTime = " $([char]0xf608) {0:0}ms" -f $history.Duration.TotalMilliseconds
+        }
+    }
+
     if ( $isDesktop ) {
-        Write-HostColor " PS " $Background $Foreground
+        Write-HostColor "$executionTime PS " $Background $Foreground
     }
     else {
-        Write-HostColor " pwsh " $Background $Foreground
+        Write-HostColor "$executionTime pwsh " $Background $Foreground
     }
 
     return $Background;

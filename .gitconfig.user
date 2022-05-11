@@ -11,3 +11,8 @@
   # tool = bc3
   tool = diffmerge
   # tool = submlimemerge
+  # tool = vscode
+
+[merge]
+  # tool = vscode
+
