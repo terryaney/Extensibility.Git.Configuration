@@ -688,6 +688,21 @@ function IntegrateVisualStudioCommandLine {
   & $script -edition:$edition -version:$version -basePath:$basePath -noWeb:$noWeb
 }
 
+function Unblock-Files {
+    param(
+        [Parameter(Mandatory = $true, Position = 1)] [string] $Directory
+    )
+    Get-ChildItem -Path $Directory -Recurse | ForEach-Object {
+        if ( Test-Path -Path $_ -PathType Leaf ) {
+            Write-Host "Unblocking file $($_.Name) ..."
+        }
+        else {
+            Write-Host "Unblocking directory $($_.Name) ..."
+        }
+        Unblock-File $_
+    }
+}
+
 # Helper functions for KAT git alias tab completion
 function script:gitRefHints($offset) {
     $refHints = New-Object System.Collections.Generic.List[string]
