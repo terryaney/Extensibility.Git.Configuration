@@ -79,6 +79,7 @@ set-content Function:prompt {
 
         # Reset LASTEXITCODE so we don't show it over and over again
         $global:LASTEXITCODE = 0
+        $Error.Clear()
 
         # Always have to return something or else we get the default prompt
         return " "
@@ -578,13 +579,19 @@ function Get-IsAdmin {
     return $isAdmin    
 }
 
+$global:OriginalTitle = ""
+
 function Write-WindowTitle {
     $WindowTitleSupported = $true
     if (Get-Module NuGet) {
         $WindowTitleSupported = $false
     }
     if ($WindowTitleSupported) {
-        $title = "$($Host.UI.RawUI.WindowTitle) $([char]0xf692) "
+        if ( $global:OriginalTitle -eq "" ) {
+            $global:OriginalTitle = $Host.UI.RawUI.WindowTitle
+        }
+
+        $title = $global:OriginalTitle
 
         if (Get-IsGitRepo) {
             $st = $GitStatus;
