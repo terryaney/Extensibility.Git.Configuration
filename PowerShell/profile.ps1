@@ -593,55 +593,57 @@ function Write-WindowTitle {
 
         $title = $global:OriginalTitle
 
-        if (Get-IsGitRepo) {
-            $st = $GitStatus;
+        if ( 0 -gt 1 ) {
+            if (Get-IsGitRepo) {
+                $st = $GitStatus;
 
-            $repoName = Split-Path -Leaf (Split-Path $st.GitDir)
-            $branch = $GitStatus.Branch
+                $repoName = Split-Path -Leaf (Split-Path $st.GitDir)
+                $branch = $GitStatus.Branch
 
-            $title = "$($repoName):$($branch) "
+                $title = "$($repoName):$($branch) "
 
-            if ( $st.AheadBy -gt 0 -and $st.BehindBy -gt 0 ) {
-                $title += "↑$($st.AheadBy)↓$($st.BehindBy) "
-            }
-            elseif ( $st.AheadBy -gt 0 ) {
-                $title += "↑$($st.AheadBy) "
-            }
-            elseif ( $st.BehindBy -gt 0 ) {
-                $title += "↓$($st.BehindBy) "
-            }
-
-
-            if ($GitPromptSettings.EnableFileStatus -and ($st.HasIndex -or $st.HasWorking)) {
-                if ($st.HasWorking) {
-                    if ( $st.Working.Added ) {
-                        $title += "+$($st.Working.Added.Count)"
-                    }
-                    if ( $st.Working.Modified ) {
-                        $title += "~$($st.Working.Modified.Count)"
-                    }
-                    if ( $st.Working.Deleted ) {
-                        $title += "-$($st.Working.Deleted.Count)"
-                    }
-                    if ( $st.Working.Unmerged ) {
-                        $title += "!$($st.Working.Unmerged.Count)"
-                    }
+                if ( $st.AheadBy -gt 0 -and $st.BehindBy -gt 0 ) {
+                    $title += "↑$($st.AheadBy)↓$($st.BehindBy) "
                 }
-                if ( $st.HasIndex -and $st.HasWorking ) {
-                    $title += " | "
+                elseif ( $st.AheadBy -gt 0 ) {
+                    $title += "↑$($st.AheadBy) "
                 }
-                if ( $st.HasIndex ) {
-                    if ( $st.Index.Added ) {
-                        $title += "+$($st.Working.Added.Count)"
+                elseif ( $st.BehindBy -gt 0 ) {
+                    $title += "↓$($st.BehindBy) "
+                }
+
+
+                if ($GitPromptSettings.EnableFileStatus -and ($st.HasIndex -or $st.HasWorking)) {
+                    if ($st.HasWorking) {
+                        if ( $st.Working.Added ) {
+                            $title += "+$($st.Working.Added.Count)"
+                        }
+                        if ( $st.Working.Modified ) {
+                            $title += "~$($st.Working.Modified.Count)"
+                        }
+                        if ( $st.Working.Deleted ) {
+                            $title += "-$($st.Working.Deleted.Count)"
+                        }
+                        if ( $st.Working.Unmerged ) {
+                            $title += "!$($st.Working.Unmerged.Count)"
+                        }
                     }
-                    if ( $st.Index.Modified ) {
-                        $title += "~$($st.Index.Modified.Count)"
+                    if ( $st.HasIndex -and $st.HasWorking ) {
+                        $title += " | "
                     }
-                    if ( $st.Index.Deleted ) {
-                        $title += "-$($st.Index.Deleted.Count)"
-                    }
-                    if ( $st.Index.Unmerged ) {
-                        $title += "!$($st.Index.Unmerged.Count)"
+                    if ( $st.HasIndex ) {
+                        if ( $st.Index.Added ) {
+                            $title += "+$($st.Working.Added.Count)"
+                        }
+                        if ( $st.Index.Modified ) {
+                            $title += "~$($st.Index.Modified.Count)"
+                        }
+                        if ( $st.Index.Deleted ) {
+                            $title += "-$($st.Index.Deleted.Count)"
+                        }
+                        if ( $st.Index.Unmerged ) {
+                            $title += "!$($st.Index.Unmerged.Count)"
+                        }
                     }
                 }
             }
