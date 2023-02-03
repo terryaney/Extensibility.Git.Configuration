@@ -825,6 +825,7 @@ showAliases() {
     echo -e " \e[1;36m bb/browse-bb\e[0m = view the current repository on bitbucket.com"
     echo -e " \e[1;36m ac\e[0m = add all files to staging & commit"
     echo -e " \e[1;36m br\e[0m = branch"
+    echo -e " \e[1;36m brr\e[0m = ls-remote = list all remote branches without FETCH"
     echo -e " \e[1;36m co\e[0m = checkout (branch)"
     echo -e " \e[1;36m com\e[0m = commit"
     echo -e " \e[1;36m commend\e[0m = before pushing, add files to last commit and update message"

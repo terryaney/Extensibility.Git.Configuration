@@ -13,6 +13,7 @@
   browse = !git tfs
   ac = !git add -A && git commit -m 
   br = branch
+  brr = ls-remote
   co = checkout
   com = commit
   commend = !sh -c 'git add . && git commit --amend' -

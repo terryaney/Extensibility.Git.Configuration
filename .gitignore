@@ -52,7 +52,9 @@ Rbl/BTR.Broker/ModelingPreview/
 Functions/
 Shared*/
 !**/Views/Shared*/
+!Pages/Shared/
 !.gitconfig.user
+!wwwroot/clients/
 
 # Camelot / .NET Core
 secrets.*.json
