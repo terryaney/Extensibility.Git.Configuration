@@ -94,33 +94,38 @@ showMyLog() {
 	    exit 0
 	fi		
 }
-	
-openBitbucketInBrowser() {
-	REPO_URL=$(git config remote.bb.url)
 
-    find="git@bitbucket.org:"
-    replace="https://bitbucket.org/"
-    
-    # Replace SSH with HTTPS prefix
-    REPO_URL=$(echo $REPO_URL | sed -e "s%${find}%${replace}%g")
+openRepoInBrowser() {
+	REPO_URL=$(git config remote.${1}.url)
 
+	if test "" == "$REPO_URL"; then
+		REPO_URL=$(git config remote.origin.url)
+	fi
 
-    find=".git"
-    replace="/commits"
-    
-    # Replace SSH with HTTPS prefix
-    REPO_URL=$(echo $REPO_URL | sed -e "s%${find}%${replace}%g")
+	if test ".git" == "${REPO_URL: -4}"; then
+		REPO_URL=${REPO_URL::-4};
+	fi
+
+	find=$2;
+	replace=$3;
+	suffix=$4;
+
+	REPO_URL="${REPO_URL//${find}/${replace}}/${suffix}"
+
     start $REPO_URL
-    
     exit 0;
 }
 
+openGitHubInBrowser() {
+	openRepoInBrowser "gh" "git@github.com:" "https://github.com/" "commits"
+}
+
+openBitbucketInBrowser() {
+	openRepoInBrowser "bb" "git@bitbucket.org:" "https://bitbucket.org/" "commits"
+}
+
 openTFSInBrowser() {
-	TFS_BASE_REPO_URL=$(git config remote.origin.url)
-    COMMIT_URL="$TFS_BASE_REPO_URL/history?_a=history"
-    start $COMMIT_URL
-    
-    exit 0;
+	openRepoInBrowser "tfs" "ssh://tfs.acsgs.com:22/" "https://tfs.acsgs.com/" "history?_a=history"
 }
 
 undoFile() {
