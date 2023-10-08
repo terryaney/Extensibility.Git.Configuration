@@ -58,3 +58,6 @@ Shared*/
 
 # Camelot / .NET Core
 secrets.*.json
+Directory.Build.props
+AssemblyInfo.generated.cs
+!.deploy/**
