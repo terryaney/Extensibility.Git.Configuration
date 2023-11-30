@@ -61,3 +61,4 @@ secrets.*.json
 Directory.Build.props
 AssemblyInfo.generated.cs
 !.deploy/**
+*.Releases/
