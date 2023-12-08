@@ -56,6 +56,9 @@ Shared*/
 !.gitconfig.user
 !wwwroot/clients/
 
+node_modules/
+out/
+
 # Camelot / .NET Core
 secrets.*.json
 Directory.Build.props
