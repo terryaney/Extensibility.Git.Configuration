@@ -5,6 +5,7 @@
 [core]
   # editor = notepad
   editor = "code -w --disable-extensions"
+  hooksPath = ~/.gitHooks
 
 # Set up default diff tool
 [diff]
