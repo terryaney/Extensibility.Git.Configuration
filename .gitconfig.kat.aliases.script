@@ -2,6 +2,7 @@
 
 # Specifying file and function in external scripts - https://stackoverflow.com/a/46435987/166231
 # Passing arguments to bash scripts - https://stackoverflow.com/questions/55161288/how-to-pass-parameters-to-from-git-alias-to-external-script
+
 showFileHistory() {
 	if [ "$#" = 1 ] && ( test "$1" == "?" || test "$1" == "-?" || test "$1" == "/?" ) 
 	then	
@@ -826,6 +827,7 @@ showAliases() {
     echo ""
     echo -e "\e[1;31m Common Git Abbreviations and Helpers\e[0m"
     echo -e " \e[1;36m tfs/browse\e[0m = view the current repository on Conduent TFS"
+    echo -e " \e[1;36m gh/browse-gh\e[0m = view the current repository on github.com"
     echo -e " \e[1;36m bb/browse-bb\e[0m = view the current repository on bitbucket.com"
     echo -e " \e[1;36m ac\e[0m = add all files to staging & commit"
     echo -e " \e[1;36m br\e[0m = branch"

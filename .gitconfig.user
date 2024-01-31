@@ -18,7 +18,4 @@
   # tool = vscode
 
 [safe]
-	directory = C:/BTR.Legacy
-	directory = C:/Program Files/Microsoft Visual Studio/2022/Community/Xml/Schemas
-	directory = C:/BTR.Legacy/TaskManager
-	directory = C:/BTR/Extensibility/Camelot/Excel.AddIn
+	directory = *
