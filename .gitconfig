@@ -3,6 +3,9 @@
   path = ~/.gitconfig.kat.aliases
   # path = ~/.gitconfig.my.aliases
 
+[init]
+	defaultBranch = main
+
 [core]
   excludesfile = ~/.gitignore
   # https://stackoverflow.com/questions/10418975/how-to-change-line-ending-settings
@@ -74,5 +77,6 @@
 #[diff "strings"]
 #  textconv = "C:/Program Files/SysInternals/strings.exe"
 #  cachetextconv = true
-[init]
-	defaultBranch = main
+
+[credential "https://tfs.acsgs.com"]
+	provider = generic
