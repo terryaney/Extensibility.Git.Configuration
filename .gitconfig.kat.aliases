@@ -50,25 +50,30 @@
   del-rb = !git z-del-rb
   co-rb = !git z-co-rb
 
+  sync-with = !git z-sync-with
+  merge-squash = !git z-merge-squash
+
   # Named with z- and called from 'normal' alias so GitTabExpansion is easier to work with
   z-fetch-all = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && fetchAllRepositories "$0" "$@"'
   z-pull-all = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && pullAllRepositories "$0" "$@"'
-  z-dt-w = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && differencesBetweenWDAndHead "$0" "$@"'
-  z-dt-c = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && differencesBetweenCommits "$0" "$@"'
   z-del-rb = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && deleteRemoteBranch "$0" "$@"'
   z-co-rb = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && checkoutRemoteBranch "$0" "$@"'
-  z-dt = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && runDiffTool "$0" "$@"'
-  z-undo = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && undoFile "$0" "$@"'
+  z-dt = "!bash -c 'source $HOME/.gitconfig.kat.aliases.script && runDiffTool \"$0\" \"$@\"' bash"
+  z-dt-w = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && differencesBetweenWDAndHead "$0" "$@"'
+  z-dt-c = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && differencesBetweenCommits "$0" "$@"'
+  z-dt-b = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && differencesBetweenBranches "$0" "$@"'
+  z-dt-s = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && differencesBetweenIndexAndHead "$0" "$@"'
+  z-undo = "!bash -c 'source $HOME/.gitconfig.kat.aliases.script && undoFile \"$0\" \"$@\"' bash"
   z-set-origin = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && setOrigin "$0" "$@"'
   z-clone-btr = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && cloneKATRepos "$0" "$@"'
   z-unstage-all = reset HEAD
   z-previous = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && pullPreviousFile "$0" "$@"'
   z-undelete = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && undeleteFile "$0" "$@"'
   z-ch-b = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && fileChangesBetweenBranches "$0" "$@"'
-  z-dt-b = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && differencesBetweenBranches "$0" "$@"'
-  z-dt-s = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && differencesBetweenIndexAndHead "$0" "$@"'
   z-remove-file = !sh -c 'git rm --cached "$0"'
-
+  z-sync-with = !sh -c 'git rebase "$0"'
+  z-merge-squash = !sh -c 'git merge --squash "$0"'
+  
   # http://mikewest.org/2011/04/a-quick-git-vim-workflow-tip
   # List Files Changed in commit (if not provided, does last/HEAD) and it's previous commit
   ch-old = !sh -c 'git show --pretty="format:" --name-only ${1-HEAD}${2+ $2} | grep -v "^$" | uniq | sed -e "s#^#`git rev-parse --show-toplevel`/#"' -

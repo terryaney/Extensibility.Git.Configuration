@@ -129,15 +129,15 @@ openTFSInBrowser() {
 }
 
 undoFile() {
-	# TODO: https://stackoverflow.com/questions/55161288/how-to-pass-parameters-from-a-git-alias-to-an-external-script
-	# echo "Params: $#, this doesn't work if file is nested with in /.  See SO question"
+	# Because of way I pass in parameters, 'bash' is always first param
+	# "!bash -c 'source $HOME/.gitconfig.kat.aliases.script && undoFile \"$0\" \"$@\"' bash"
 
-	if [ "$#" = 1 ] && ( test "$1" == "?" || test "$1" == "-?" || test "$1" == "/?" ) 
+	if [ "$#" = 2 ] && ( test "$2" == "?" || test "$2" == "-?" || test "$2" == "/?" ) 
 	then	
 		showHelp="y"
 	fi
 
-	if [ "$#" -gt 1 ] || [ "$showHelp" = "y" ] || [ "$1" = "bash" ]
+	if [ "$#" -gt 3 ] || [ "$showHelp" = "y" ]
 	then
 		echo -e "\n Undo changes (same as \e[1;36mgit co -- <pattern>\e[0m)."
 	    echo ""
@@ -151,7 +151,7 @@ undoFile() {
 
 	else
 
-		git checkout -- "$1"
+		git checkout -- "$2"
 
 	fi
 }
@@ -220,12 +220,14 @@ showDeletes() {
 }
 
 runDiffTool() {
+	# Because of way I pass in parameters, 'bash' is always first param
+	# "!bash -c 'source $HOME/.gitconfig.kat.aliases.script && runDiffTool \"$0\" \"$@\"' bash"
+	
 	# Show differences between working directory and commit (index if not supplied), optionally specifying one file
 	# dt - all diffs between working directory and index
 	# dt readme.txt - readme.txt diffs between working directory and index
 	# dt readme.txt HEAD^^ - readme.txt diffs between working directory and HEAD^^
-
-	if [ "$#" = 1 ] && ( test "$1" == "?" || test "$1" == "-?" || test "$1" == "/?" )
+	if [ "$#" = 2 ] && ( test "$2" == "?" || test "$2" == "-?" || test "$2" == "/?" )
 	then
 		echo -e " Show all diffs between working directory and index.  usage:"
 		echo -e "\e[1;36m git dt\e[0m - all diffs between working directory and index"
@@ -234,12 +236,14 @@ runDiffTool() {
 		
 		echoDiffToolOverview
 	else
-		# Because of way I pass in parameters, if command is called with 'nothing', then it passes 'bash' as first param
-		if test "$1" == "bash"
+		if [ "$#" = 1 ]
 		then
-			git difftool --no-prompt $2
+			git difftool --no-prompt
+		elif [ "$#" = 2 ]
+		then
+			git difftool --no-prompt "$2"
 		else
-			git difftool --no-prompt $2 ${1+-- "$1"}
+			git difftool --no-prompt "$3" ${2+-- "$2"}
 		fi	
 	fi	
 }
@@ -866,6 +870,11 @@ showAliases() {
     echo -e " \e[1;36m set-origin <type>\e[0m: Updates KAT repository configuration (\e[1;36mgit set-origin /?\e[0m for help)."
     echo -e " \e[1;36m co-rb <remote> <branch>\e[0m: Pulls a remote branch and switches to it for editing."; \
     echo -e " \e[1;36m del-rb <remote> <branch>\e[0m: Deletes both the local and remote branches."; \
+
+    echo ""
+    echo -e "\e[1;31m Repository Merge Helpers\e[0m"
+    echo -e " \e[1;36m sync-with <branch>\e[0m: Pull all commits from <branch> into the current branch (i.e. pulling main commits into feature branch)."
+    echo -e " \e[1;36m merge-squash <feature-branch>\e[0m: Pull all changes from <feature-branch> into the current branch for single (merge) commit."
 
     echo ""
     echo -e "\e[1;31m Repository Detail Helpers\e[0m"
