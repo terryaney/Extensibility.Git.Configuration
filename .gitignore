@@ -32,7 +32,6 @@ deploy/*
 [Bb]in/
 packages/
 _UpgradeReport_Files/
-TestResults/
 .vs/
 
 Clients/
@@ -65,3 +64,4 @@ Directory.Build.props
 AssemblyInfo.generated.cs
 !.deploy/**
 *.Releases/
+**/tests/**/TestResults/coverage.info
