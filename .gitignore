@@ -64,4 +64,4 @@ Directory.Build.props
 AssemblyInfo.generated.cs
 !.deploy/**
 *.Releases/
-**/tests/**/TestResults/coverage.info
+**/tests/**/TestResults/
