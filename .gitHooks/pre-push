@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # If pushing KatApp.git, then also update documentation...
-case "$2" in *KatApp.git)
+case "$2" in *KatApp.git.DISABLED)
 	echo ""
 	echo "Updating documentation..."
 	echo ""
@@ -33,7 +33,46 @@ case "$2" in *KatApp.git)
 
 		# Stage and commit the copied file with the new filename
 		git add "$NEW_FILE_NAME"
-		git commit -m "Automatically updated file $NEW_FILE_NAME from main:Documentation.Camelot, commit $CURRENT_COMMIT"
+		git commit -m "Automatically updated file $NEW_FILE_NAME from main:KatApp, commit $CURRENT_COMMIT"
+
+		# Push the commit to the destination repository
+		git push origin "$DEST_BRANCH"
+	fi
+esac
+
+case "$2" in *Extensibility.Camelot.Excel.KAT.git.DISABLED)
+	echo ""
+	echo "Updating Excel-DNA documentation..."
+	echo ""
+	
+	FILE_TO_COPY="Readme.md" # replace with the file you want to copy
+	NEW_FILE_NAME="Readme.md" # replace with the new name you want for the file
+
+	# Set the path to the destination repository and branch name
+	DEST_REPO_PATH="/c/BTR/OpenSource/Extensibility.ExcelDNA.Sample"
+	DEST_BRANCH="main"
+
+	# Get the name of the current branch and commit hash
+	while read local_ref local_sha remote_ref remote_sha
+	do
+		if [[ $local_ref = refs/heads/main ]]; then
+			CURRENT_BRANCH="main"
+			CURRENT_COMMIT=$(echo "$local_sha" | cut -c1-7)
+		fi
+	done
+
+	# Check if the current branch is "main" and the file to copy exists
+	if [[ $CURRENT_BRANCH == "main" && -f $FILE_TO_COPY ]]; then
+		# Copy the file to the destination repository with the new filename
+		cp "$FILE_TO_COPY" "$DEST_REPO_PATH/$NEW_FILE_NAME"
+
+		# Switch to the destination repository and checkout the destination branch
+		cd "$DEST_REPO_PATH"
+		# git checkout "$DEST_BRANCH"
+
+		# Stage and commit the copied file with the new filename
+		git add "$NEW_FILE_NAME"
+		git commit -m "Automatically updated file $NEW_FILE_NAME from main:Extensibility.Camelot.Excel.KAT, commit $CURRENT_COMMIT"
 
 		# Push the commit to the destination repository
 		git push origin "$DEST_BRANCH"
