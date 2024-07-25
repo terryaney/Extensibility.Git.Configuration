@@ -95,6 +95,27 @@ showMyLog() {
 	fi		
 }
 
+queueBuild() {
+   # Get the first .csproj file in the current directory
+    csprojFile=$(find . -maxdepth 1 -name "*.csproj" | head -n 1)
+
+    if [ -z "$csprojFile" ]; then
+        echo "No .csproj file found in the current directory." >&2
+        exit 1
+    fi
+
+    # Define the path to lprun.exe and the script to run
+	csprojFilePath=$(realpath "$csprojFile")
+    lprunPath="lprun.exe"
+    scriptPath="C:\BTR\Extensibility\Build.Scripts\Build.Events.linq"
+
+    # Define the arguments
+    projectFileArg="ProjectFile:$csprojFilePath"
+
+    # Run lprun.exe with the arguments
+    $lprunPath "$scriptPath" "$projectFileArg" "GitType:synced" "Command:queue.cicd"
+}
+
 openRepoInBrowser() {
 	REPO_URL=$(git config remote.${1}.url)
 

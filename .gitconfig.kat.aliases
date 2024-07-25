@@ -7,6 +7,8 @@
   # https://stackoverflow.com/questions/46695859/should-i-use-sh-c-or-f-f-in-git-alias-scripts/46698535?noredirect=1#comment97121794_46698535
   aliases = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && showAliases "$0" "$@"'
 
+  pub = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && queueBuild'  
+  publish = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && queueBuild'  
   gh = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && openGitHubInBrowser'  
   bb = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && openBitbucketInBrowser'  
   tfs = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && openTFSInBrowser'  
