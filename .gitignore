@@ -65,3 +65,5 @@ AssemblyInfo.generated.cs
 !.deploy/**
 *.Releases/
 **/tests/**/TestResults/
+_SvcOffline.txt
+SvcOffline.txt
