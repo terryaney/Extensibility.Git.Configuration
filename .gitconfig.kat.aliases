@@ -20,6 +20,7 @@
   commend = !sh -c 'git add . && git commit --amend' -
   st = status --short --branch
   l = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && showMyLog "$0" "$@"'
+  his = log --pretty=format:\"%C(auto)%h%Creset %C(green)%ad%Creset | %s %C(bold cyan)<%an>%C(green)%d%Creset\" --graph --date=short
 
   u = undo
   undo = !git z-undo

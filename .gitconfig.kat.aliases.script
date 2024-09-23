@@ -32,7 +32,7 @@ showMyLog() {
 		echo -e "\nShow preferred KAT output format for logs.  optional parameters:\n"
 		echo -e "\033[1;32m #\033[0m - Number of log entries, by default last 5 (git l 5)"
 		echo -e "\033[1;32m graph\033[0m - Show Graph. Include the git branch graph in the output (git l 5 graph)"
-		echo -e "\033[1;32m s\033[0m - Full Subject. Include the full subject in the output, default is truncated at 100 characters (git l 5 s)"
+		echo -e "\033[1;32m s\033[0m - Full Subject. Include the full subject in the output, default is truncated at 70 characters (git l 5 s)"
 		echo -e "\033[1;32m m\033[0m- Full Message. Include the full message in the output (git l 5 m)"
 		echo -e "\033[1;32m f\033[0m - Show Files. Include listing of files affected by each commit in the output (git l 5 f)"
 		echo -e "\033[1;32m ff <file>\033[0m - Follow file.  Only show the last # of commits where <file> is part of the commit (git l ff Test.txt)"
@@ -43,7 +43,7 @@ showMyLog() {
 		# Default parameter values
 	    graph=""
 	    entries=5
-	    subject=" %<(90,trunc)%s"
+	    subject=" %<(70,trunc)%s"
 	    body=""
 	    showFiles=""
 	    follow=""
@@ -88,7 +88,9 @@ showMyLog() {
 	    done
 
 	    echo ""
-	    pretty="%C(yellow)%h%Creset %<(15,trunc)%cn %C(dim yellow)%ad%Creset${subject}${body}"
+	    # pretty="%C(auto)%h%Creset %<(15,trunc)%cn %C(dim yellow)%ad%Creset${subject}${body}"
+	    pretty="%C(auto)%h%Creset %C(green)%ad %C(bold cyan)%<(15,trunc)%an%Creset${subject}%C(green)%d%Creset${body}" 
+
 		# echo "--pretty=\"format:${pretty}\" -${entries} --date=short${graph}${showFiles}${follow}"
 	    git log --pretty="format:${pretty}" -${entries} --date=short${graph}${showFiles}${follow}
 	    exit 0
@@ -867,8 +869,9 @@ showAliases() {
     echo -e " \033[1;36m co\033[0m = checkout (branch)"
     echo -e " \033[1;36m com\033[0m = commit"
     echo -e " \033[1;36m commend\033[0m = before pushing, add files to last commit and update message"
-    echo -e " \033[1;36m l\033[0m = KAT log display (\033[1;36mgit l /?\033[0m for details)"
     echo -e " \033[1;36m st\033[0m = condensed status display (similar to \033[1;36mgit status\033[0m)"
+    echo -e " \033[1;36m l\033[0m = KAT log display (\033[1;36mgit l /?\033[0m for details)"
+    echo -e " \033[1;36m his\033[0m = KAT commit history and graph display"
 
     echo ""
     echo -e "\033[1;31m File Change Helpers\033[0m"
