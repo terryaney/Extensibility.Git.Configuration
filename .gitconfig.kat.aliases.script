@@ -14,11 +14,11 @@ showFileHistory() {
 
 		echo -e "\n Show commits where <file> is part of the commit\n"
 		echo -e " usage: git fhs <file> {#}"
-		echo -e " Defaults: \e[1;32m #\e[0m - Number of log entries, by default last 5 (git l 5)"
+		echo -e " Defaults: \033[1;32m #\033[0m - Number of log entries, by default last 5 (git l 5)"
 
 	    if [ "$showHelp" != "y" ]
 	    then
-	    	echo -e "\n\e[1;31m Incorrect parameters provided.\e[0m"
+	    	echo -e "\n\033[1;31m Incorrect parameters provided.\033[0m"
 	    	exit 1
 	    fi
 	else
@@ -30,15 +30,15 @@ showMyLog() {
 	if [ "$#" = 1 ] && ( test "$1" == "?" || test "$1" == "-?" || test "$1" == "/?" )
 	then
 		echo -e "\nShow preferred KAT output format for logs.  optional parameters:\n"
-		echo -e "\e[1;32m #\e[0m - Number of log entries, by default last 5 (git l 5)"
-		echo -e "\e[1;32m graph\e[0m - Show Graph. Include the git branch graph in the output (git l 5 graph)"
-		echo -e "\e[1;32m s\e[0m - Full Subject. Include the full subject in the output, default is truncated at 100 characters (git l 5 s)"
-		echo -e "\e[1;32m m\e[0m- Full Message. Include the full message in the output (git l 5 m)"
-		echo -e "\e[1;32m f\e[0m - Show Files. Include listing of files affected by each commit in the output (git l 5 f)"
-		echo -e "\e[1;32m ff <file>\e[0m - Follow file.  Only show the last # of commits where <file> is part of the commit (git l ff Test.txt)"
+		echo -e "\033[1;32m #\033[0m - Number of log entries, by default last 5 (git l 5)"
+		echo -e "\033[1;32m graph\033[0m - Show Graph. Include the git branch graph in the output (git l 5 graph)"
+		echo -e "\033[1;32m s\033[0m - Full Subject. Include the full subject in the output, default is truncated at 100 characters (git l 5 s)"
+		echo -e "\033[1;32m m\033[0m- Full Message. Include the full message in the output (git l 5 m)"
+		echo -e "\033[1;32m f\033[0m - Show Files. Include listing of files affected by each commit in the output (git l 5 f)"
+		echo -e "\033[1;32m ff <file>\033[0m - Follow file.  Only show the last # of commits where <file> is part of the commit (git l ff Test.txt)"
 		echo -e ""
-		echo -e "\e[1;32m Combine Parameters\e[0m - Combine parameters by placing space between parameters.  (git l s f)"
-		echo -e "\e[1;32m Notes\e[0m - Parameters can be prefixed with - as well (git l -s -f).  Can use full names as well. s(ubject), m(essage), f(iles) or follow (for ff)."
+		echo -e "\033[1;32m Combine Parameters\033[0m - Combine parameters by placing space between parameters.  (git l s f)"
+		echo -e "\033[1;32m Notes\033[0m - Parameters can be prefixed with - as well (git l -s -f).  Can use full names as well. s(ubject), m(essage), f(iles) or follow (for ff)."
 	else
 		# Default parameter values
 	    graph=""
@@ -114,7 +114,7 @@ queueBuild() {
 	csprojFilePath=$(echo "$csprojFilePath" | sed 's|^\\c\\|C:\\|')
 
     lprunPath="lprun.exe"
-    scriptPath="C:\BTR\Extensibility\Build.Scripts\Build.Events.linq"
+    scriptPath="C:\BTR\033xtensibility\Build.Scripts\Build.Events.linq"
 
     # Define the arguments
     projectFileArg="ProjectFile:$csprojFilePath"
@@ -167,13 +167,13 @@ undoFile() {
 
 	if [ "$#" -gt 3 ] || [ "$showHelp" = "y" ]
 	then
-		echo -e "\n Undo changes (same as \e[1;36mgit co -- <pattern>\e[0m)."
+		echo -e "\n Undo changes (same as \033[1;36mgit co -- <pattern>\033[0m)."
 	    echo ""
 	    echo -e " usage: git undo <pattern>"
 
 	    if test "$showHelp" != "y"
 	    then
-	    	echo -e "\n\e[1;31m Incorrect parameters provided.\e[0m"
+	    	echo -e "\n\033[1;31m Incorrect parameters provided.\033[0m"
 	    	exit 1
 	    fi
 
@@ -189,7 +189,7 @@ showIgnored() {
 	if [ "$#" = 1 ] && ( test "$1" == "?" || test "$1" == "-?" || test "$1" == "/?" )
 	then
 		echo -e "\n Displays all directories ignored in the repository with optional summary output.  optional parameters:\n"
-		echo -e "\e[1;32m <path>\e[0m - Show reason a specific file or directory is ignored"
+		echo -e "\033[1;32m <path>\033[0m - Show reason a specific file or directory is ignored"
 	else
 		# Directories already reported
 		directories=()
@@ -236,7 +236,7 @@ showDeletes() {
 	if [ "$#" = 1 ] && ( test "$1" == "?" || test "$1" == "-?" || test "$1" == "/?" )
 	then
 		echo -e " Displays all commits with files deleted from a repository with optional summary output.  optional parameters:\n"
-		echo -e "\e[1;32m d\e[0m - Show Detail. Include full commit subject/comment in the output."
+		echo -e "\033[1;32m d\033[0m - Show Detail. Include full commit subject/comment in the output."
 	else
 		if [ "$#" = 1 ] && ( test "$1" == "d" || test "$1" == "-d" || test "$1" == "-detail" || test "$1" == "detail" )
 		then
@@ -258,9 +258,9 @@ runDiffTool() {
 	if [ "$#" = 2 ] && ( test "$2" == "?" || test "$2" == "-?" || test "$2" == "/?" )
 	then
 		echo -e " Show all diffs between working directory and index.  usage:"
-		echo -e "\e[1;36m git dt\e[0m - all diffs between working directory and index"
-		echo -e "\e[1;36m git dt readme.txt\e[0m - readme.txt diffs between working directory and index"
-		echo -e "\e[1;36m git dt readme.txt HEAD^^\e[0m - readme.txt diffs between working directory and HEAD^^"
+		echo -e "\033[1;36m git dt\033[0m - all diffs between working directory and index"
+		echo -e "\033[1;36m git dt readme.txt\033[0m - readme.txt diffs between working directory and index"
+		echo -e "\033[1;36m git dt readme.txt HEAD^^\033[0m - readme.txt diffs between working directory and HEAD^^"
 		
 		echoDiffToolOverview
 	else
@@ -285,7 +285,7 @@ checkoutRemoteBranch() {
 		exit 0
 	else
 		echo -e "usage: git co-rb <origin> <branch>"
-    	echo -e "\n\e[1;31m Incorrect parameters provided.\e[0m"
+    	echo -e "\n\033[1;31m Incorrect parameters provided.\033[0m"
 		exit 1
 	fi	
 }
@@ -300,7 +300,7 @@ deleteRemoteBranch() {
 		exit 0
 	else
 		echo -e "usage: git del-rb <remote> <branch> - you must provide both parameters"
-    	echo -e "\n\e[1;31m Incorrect parameters provided.\e[0m"
+    	echo -e "\n\033[1;31m Incorrect parameters provided.\033[0m"
 		exit 1
 	fi	
 }
@@ -315,12 +315,12 @@ pullPreviousFile() {
 	if [ "$#" != 2 ] || [ "$showHelp" = "y" ]
 	then
 		echo -e "\n Pulls a file from previous commit into your working directory. usage:\n"
-	    echo -e "\e[1;36m git prev <commit> <file>\e[0m"
-	    echo -e "\e[1;36m git prev HEAD^ readme.txt\e[0m pulls readme.txt from second to last commit"
+	    echo -e "\033[1;36m git prev <commit> <file>\033[0m"
+	    echo -e "\033[1;36m git prev HEAD^ readme.txt\033[0m pulls readme.txt from second to last commit"
 
 	    if [ "$showHelp" != "y" ]
 	    then
-	    	echo -e "\n\e[1;31m Incorrect parameters provided.\e[0m"
+	    	echo -e "\n\033[1;31m Incorrect parameters provided.\033[0m"
 	    	exit 1
 	    fi
 
@@ -344,13 +344,13 @@ fileChangesBetweenBranches() {
 	if [ "$#" = 0 ] || [ "$#" -gt 2 ] || [ "$showHelp" = "y" ] || [ "$1" = "bash" ]
 	then
 
-		echo -e "\n Displays all files changed between \e[1;32mbranches\e[0m.\n"
+		echo -e "\n Displays all files changed between \033[1;32mbranches\033[0m.\n"
 		echo -e " usage: git ch-b <branch1> {branch2}"
 	    echo -e " defaults: branch2 - current branch"
 
 	    if [ "$showHelp" != "y" ]
 	    then
-	    	echo -e "\n\e[1;31m Incorrect parameters provided.\e[0m"
+	    	echo -e "\n\033[1;31m Incorrect parameters provided.\033[0m"
 	    	exit 1
 	    fi
 	else
@@ -384,7 +384,7 @@ undeleteFile() {
 
 	    if [ "$showHelp" != "y" ]
 	    then
-	    	echo -e "\n\e[1;31m Incorrect parameters provided.\e[0m"
+	    	echo -e "\n\033[1;31m Incorrect parameters provided.\033[0m"
 	    	exit 1
 	    fi
 	else
@@ -404,12 +404,12 @@ differencesBetweenBranches() {
 	if [ "$#" != 2 ] || [ "$showHelp" = "y" ]
 	then
 
-		echo -e "\n Displays file differences between \e[1;32mbranches\e[0m. usage: git dt-b <branch> <file>\n"
-	    echo -e "\e[1;36m git dt-b FeatureBr readme.txt\e[0m displays all readme.txt diffs between \e[1;32mcurrent branch\e[0m and \e[1;32mFeatureBr\e[0m."
+		echo -e "\n Displays file differences between \033[1;32mbranches\033[0m. usage: git dt-b <branch> <file>\n"
+	    echo -e "\033[1;36m git dt-b FeatureBr readme.txt\033[0m displays all readme.txt diffs between \033[1;32mcurrent branch\033[0m and \033[1;32mFeatureBr\033[0m."
 
 	    if [ "$showHelp" != "y" ]
 	    then
-	    	echo -e "\n\e[1;31m Incorrect parameters provided.\e[0m"
+	    	echo -e "\n\033[1;31m Incorrect parameters provided.\033[0m"
 	    	exit 1
 	    fi
 
@@ -431,18 +431,18 @@ differencesBetweenCommits() {
 
 	if [ "$#" -gt 3 ] || [ "$showHelp" = "y" ]
 	then
-		echo -e "\n Displays differences between \e[1;32mcommits\e[0m, optionally specifiying file pattern.\n"
+		echo -e "\n Displays differences between \033[1;32mcommits\033[0m, optionally specifiying file pattern.\n"
 	    echo -e " usage:\tgit dt-c {commit1} {commit2} {pattern}"
 	    echo -e " defaults: commit1 - HEAD, commit2 - <commit1>~1, pattern - all files"
 	    echo ""
-	    echo -e " \e[1;36m git dt-c\e[0m displays all diffs between HEAD and HEAD~1"
-	    echo -e " \e[1;36m git dt-c HEAD\e[0m displays all diffs between HEAD and HEAD~1"
-	    echo -e " \e[1;36m git dt-c HEAD HEAD~2\e[0m displays all diffs between HEAD and HEAD~2"
-	    echo -e " \e[1;36m git dt-c HEAD HEAD~2 readme.txt\e[0m displays readme.txt diffs between HEAD and HEAD~2"
+	    echo -e " \033[1;36m git dt-c\033[0m displays all diffs between HEAD and HEAD~1"
+	    echo -e " \033[1;36m git dt-c HEAD\033[0m displays all diffs between HEAD and HEAD~1"
+	    echo -e " \033[1;36m git dt-c HEAD HEAD~2\033[0m displays all diffs between HEAD and HEAD~2"
+	    echo -e " \033[1;36m git dt-c HEAD HEAD~2 readme.txt\033[0m displays readme.txt diffs between HEAD and HEAD~2"
 
 	    if test "$showHelp" != "y"
 	    then
-	    	echo -e "\n\e[1;31m Incorrect parameters provided.\e[0m"
+	    	echo -e "\n\033[1;31m Incorrect parameters provided.\033[0m"
 	    	exit 1
 	    fi
 
@@ -468,9 +468,9 @@ differencesBetweenIndexAndHead() {
 
 	if [ "$#" -gt 1 ] || [ "$showHelp" = "y" ]
 	then
-		echo -e "\n Displays differences between \e[1;32mStaging Area\e[0m and \e[1;32mMost Recent Commit\e[0m, optionally specifiying"
-		echo -e " a file pattern. Use this when you have added files with \e[1;36mgit add\e[0m and you want to see the"
-		echo -e " difference of the already added files in the \e[1;32mStaging Area\e[0m."
+		echo -e "\n Displays differences between \033[1;32mStaging Area\033[0m and \033[1;32mMost Recent Commit\033[0m, optionally specifiying"
+		echo -e " a file pattern. Use this when you have added files with \033[1;36mgit add\033[0m and you want to see the"
+		echo -e " difference of the already added files in the \033[1;32mStaging Area\033[0m."
 	    echo ""
 	    echo -e " usage: git dt-s {pattern}"
 
@@ -478,7 +478,7 @@ differencesBetweenIndexAndHead() {
 
 	    if test "$showHelp" != "y"
 	    then
-	    	echo -e "\n\e[1;31m Incorrect parameters provided.\e[0m"
+	    	echo -e "\n\033[1;31m Incorrect parameters provided.\033[0m"
 	    	exit 1
 	    fi
 
@@ -503,9 +503,9 @@ differencesBetweenWDAndHead() {
 
 	if [ "$#" -gt 1 ] || [ "$showHelp" = "y" ]
 	then
-		echo -e "\n Displays differences between \e[1;32mWorking Directory\e[0m and \e[1;32mMost Recent Commit\e[0m, optionally specifiying"
-		echo -e " a file pattern. Use this when you have added files with \e[1;36mgit add\e[0m and you want to compare"
-		echo -e " your \e[1;32mWorking Directory\e[0m to \e[1;32mMost Recent Commit\e[0m."
+		echo -e "\n Displays differences between \033[1;32mWorking Directory\033[0m and \033[1;32mMost Recent Commit\033[0m, optionally specifiying"
+		echo -e " a file pattern. Use this when you have added files with \033[1;36mgit add\033[0m and you want to compare"
+		echo -e " your \033[1;32mWorking Directory\033[0m to \033[1;32mMost Recent Commit\033[0m."
 	    echo ""
 	    echo -e " usage: git dt-w {pattern}"
 
@@ -513,7 +513,7 @@ differencesBetweenWDAndHead() {
 
 	    if test "$showHelp" != "y"
 	    then
-	    	echo -e "\n\e[1;31m Incorrect parameters provided.\e[0m"
+	    	echo -e "\n\033[1;31m Incorrect parameters provided.\033[0m"
 	    	exit 1
 	    fi
 
@@ -537,11 +537,11 @@ echoDiffToolOverview() {
     echo -e "  | File Edits |      | stage via |     | commit |"
     echo -e "                      |  git add  |"
     echo ""
-    echo -e "\e[1;36m git dt\e[0m - Difference between \e[1;32mWorking Directory\e[0m and \e[1;32mStaging Area\e[0m"
+    echo -e "\033[1;36m git dt\033[0m - Difference between \033[1;32mWorking Directory\033[0m and \033[1;32mStaging Area\033[0m"
     echo -e "          (Most Recent Commit is if Staging Area is empty)"
-    echo -e "\n\e[1;36m git dt-s\e[0m - Difference between \e[1;32mStaging Area\e[0m and \e[1;32mMost Recent Commit\e[0m"
+    echo -e "\n\033[1;36m git dt-s\033[0m - Difference between \033[1;32mStaging Area\033[0m and \033[1;32mMost Recent Commit\033[0m"
     echo -e "            (nothing if Staging Area is empty)"
-    echo -e "\n\e[1;36m git dt-w\e[0m - Difference between \e[1;32mWorking Directory\e[0m and \e[1;32mMost Recent Commit\e[0m"
+    echo -e "\n\033[1;36m git dt-w\033[0m - Difference between \033[1;32mWorking Directory\033[0m and \033[1;32mMost Recent Commit\033[0m"
     echo -e "            (Staging Area is ignored)"
 }
 
@@ -573,12 +573,12 @@ function cloneKATRepos() {
 	    echo ""
 	    echo -e " usage:\tgit clone-btr <type> {clientRepoName}"
 	    echo ""
-	    echo -e "\e[1;32m type\e[0m: ESS, Admin, ESS.4.1, Admin.4.5, Tahiti, or Shared.* If starts with 'Shared', clientRepoName is not needed."
-	    echo -e "\e[1;32m clientRepoName\e[0m: If location does not start with 'Shared', this parameter is name of the client repository to clone."
+	    echo -e "\033[1;32m type\033[0m: ESS, Admin, ESS.4.1, Admin.4.5, Tahiti, or Shared.* If starts with 'Shared', clientRepoName is not needed."
+	    echo -e "\033[1;32m clientRepoName\033[0m: If location does not start with 'Shared', this parameter is name of the client repository to clone."
 
 	    if test "$showHelp" != "y"
 	    then
-	    	echo -e "\n\e[1;31m Incorrect parameters provided.\e[0m"
+	    	echo -e "\n\033[1;31m Incorrect parameters provided.\033[0m"
 	    	exit 1
 	    fi
 
@@ -817,11 +817,11 @@ setOrigin () {
 	    echo ""
 	    echo -e " usage:\tgit set-origin <type>"
 	    echo ""
-	    echo -e "\e[1;32m type\e[0m: ESS, Admin, ESS.4.1, Admin.4.5, Tahiti, or Shared.* If starts with 'Shared', clientRepoName is not needed."
+	    echo -e "\033[1;32m type\033[0m: ESS, Admin, ESS.4.1, Admin.4.5, Tahiti, or Shared.* If starts with 'Shared', clientRepoName is not needed."
 
 	    if test "$showHelp" != "y"
 	    then
-	    	echo -e "\n\e[1;31m Incorrect parameters provided.  type provided was '$1'.  Param count was $#.\e[0m"
+	    	echo -e "\n\033[1;31m Incorrect parameters provided.  type provided was '$1'.  Param count was $#.\033[0m"
 	    	exit 1
 	    fi
 
@@ -854,61 +854,61 @@ setOrigin () {
 }
 
 showAliases() {
-	# \e[1;31m ... \e[0m - Red font
+	# \033[1;31m ... \033[0m - Red font
 
     echo ""
-    echo -e "\e[1;31m Common Git Abbreviations and Helpers\e[0m"
-    echo -e " \e[1;36m tfs/browse\e[0m = view the current repository on Conduent TFS"
-    echo -e " \e[1;36m gh/browse-gh\e[0m = view the current repository on github.com"
-    echo -e " \e[1;36m bb/browse-bb\e[0m = view the current repository on bitbucket.com"
-    echo -e " \e[1;36m ac\e[0m = add all files to staging & commit"
-    echo -e " \e[1;36m br\e[0m = branch"
-    echo -e " \e[1;36m brr\e[0m = ls-remote = list all remote branches without FETCH"
-    echo -e " \e[1;36m co\e[0m = checkout (branch)"
-    echo -e " \e[1;36m com\e[0m = commit"
-    echo -e " \e[1;36m commend\e[0m = before pushing, add files to last commit and update message"
-    echo -e " \e[1;36m l\e[0m = KAT log display (\e[1;36mgit l /?\e[0m for details)"
-    echo -e " \e[1;36m st\e[0m = condensed status display (similar to \e[1;36mgit status\e[0m)"
+    echo -e "\033[1;31m Common Git Abbreviations and Helpers\033[0m"
+    echo -e " \033[1;36m tfs/browse\033[0m = view the current repository on Conduent TFS"
+    echo -e " \033[1;36m gh/browse-gh\033[0m = view the current repository on github.com"
+    echo -e " \033[1;36m bb/browse-bb\033[0m = view the current repository on bitbucket.com"
+    echo -e " \033[1;36m ac\033[0m = add all files to staging & commit"
+    echo -e " \033[1;36m br\033[0m = branch"
+    echo -e " \033[1;36m brr\033[0m = ls-remote = list all remote branches without FETCH"
+    echo -e " \033[1;36m co\033[0m = checkout (branch)"
+    echo -e " \033[1;36m com\033[0m = commit"
+    echo -e " \033[1;36m commend\033[0m = before pushing, add files to last commit and update message"
+    echo -e " \033[1;36m l\033[0m = KAT log display (\033[1;36mgit l /?\033[0m for details)"
+    echo -e " \033[1;36m st\033[0m = condensed status display (similar to \033[1;36mgit status\033[0m)"
 
     echo ""
-    echo -e "\e[1;31m File Change Helpers\e[0m"
-    echo -e " \e[1;36m u, undo <pattern>\e[0m = undo changes (same as \e[1;36mgit co -- <pattern>\e[0m)"
-    echo -e " \e[1;36m undo-all\e[0m = undo *all* changes (same as \e[1;36mgit reset --hard HEAD\e[0m)"
-    echo -e " \e[1;36m unstage <pattern>\e[0m = removes files from the Staged area (same as \e[1;36mgit reset -- <pattern>\e[0m)"
-    echo -e " \e[1;36m unstage-all\e[0m = removes *ALL* files from the Staged area (same as \e[1;36mgit reset HEAD\e[0m)"
-    echo -e " \e[1;36m previous/prev <commit> <file>\e[0m: Pulls a file from previous commit into your working directory."; \
-    echo -e " \e[1;36m undelete <file>\e[0m: Recovers a file from the parent of the deleting commit."; \
+    echo -e "\033[1;31m File Change Helpers\033[0m"
+    echo -e " \033[1;36m u, undo <pattern>\033[0m = undo changes (same as \033[1;36mgit co -- <pattern>\033[0m)"
+    echo -e " \033[1;36m undo-all\033[0m = undo *all* changes (same as \033[1;36mgit reset --hard HEAD\033[0m)"
+    echo -e " \033[1;36m unstage <pattern>\033[0m = removes files from the Staged area (same as \033[1;36mgit reset -- <pattern>\033[0m)"
+    echo -e " \033[1;36m unstage-all\033[0m = removes *ALL* files from the Staged area (same as \033[1;36mgit reset HEAD\033[0m)"
+    echo -e " \033[1;36m previous/prev <commit> <file>\033[0m: Pulls a file from previous commit into your working directory."; \
+    echo -e " \033[1;36m undelete <file>\033[0m: Recovers a file from the parent of the deleting commit."; \
 
     echo ""
-    echo -e "\e[1;31m Advanced File Change Helpers\e[0m"
-    echo -e " \e[1;36m fhs <file> <#>\e[0m: Displays all commits for the specified file (\e[1;36mgit fhs /?\e[0m for help)."
-    echo -e " \e[1;36m ch <commit> <commit>\e[0m: Displays files changed between specified commits (\e[1;36mgit ch /?\e[0m for help)."
-    echo -e " \e[1;36m ch-b <branch> {branch}\e[0m: Displays files changed between specified branches (\e[1;36mgit ch-b /?\e[0m for help)."
-    echo -e " \e[1;36m dt <pattern>\e[0m: Displays differences for files (\e[1;36mgit dt /?\e[0m for parameters/details)."
-    echo -e " \e[1;36m dt-c\e[0m: Displays differences between \e[1;32mcommits\e[0m (\e[1;36mgit dt-c /?\e[0m for help)."
-    echo -e " \e[1;36m dt-b\e[0m: Displays file differences between \e[1;32mbranches\e[0m."
-    echo -e " \e[1;36m dt-s\e[0m: Displays differences between \e[1;32mindex/staging area\e[0m and \e[1;32mHEAD\e[0m (\e[1;36mgit dt-s /?\e[0m for help)."
-    echo -e " \e[1;36m dt-w\e[0m: Displays differences between \e[1;32mworking directory\e[0m and \e[1;32mHEAD\e[0m, (\e[1;36mgit dt-w /?\e[0m for help)."
+    echo -e "\033[1;31m Advanced File Change Helpers\033[0m"
+    echo -e " \033[1;36m fhs <file> <#>\033[0m: Displays all commits for the specified file (\033[1;36mgit fhs /?\033[0m for help)."
+    echo -e " \033[1;36m ch <commit> <commit>\033[0m: Displays files changed between specified commits (\033[1;36mgit ch /?\033[0m for help)."
+    echo -e " \033[1;36m ch-b <branch> {branch}\033[0m: Displays files changed between specified branches (\033[1;36mgit ch-b /?\033[0m for help)."
+    echo -e " \033[1;36m dt <pattern>\033[0m: Displays differences for files (\033[1;36mgit dt /?\033[0m for parameters/details)."
+    echo -e " \033[1;36m dt-c\033[0m: Displays differences between \033[1;32mcommits\033[0m (\033[1;36mgit dt-c /?\033[0m for help)."
+    echo -e " \033[1;36m dt-b\033[0m: Displays file differences between \033[1;32mbranches\033[0m."
+    echo -e " \033[1;36m dt-s\033[0m: Displays differences between \033[1;32mindex/staging area\033[0m and \033[1;32mHEAD\033[0m (\033[1;36mgit dt-s /?\033[0m for help)."
+    echo -e " \033[1;36m dt-w\033[0m: Displays differences between \033[1;32mworking directory\033[0m and \033[1;32mHEAD\033[0m, (\033[1;36mgit dt-w /?\033[0m for help)."
 
     echo ""
-    echo -e "\e[1;31m Repository Helpers\e[0m"
-    echo -e " \e[1;36m pull-all\e[0m: Pull all repositories, merging changes in (including /Shared* repositories)."
-    echo -e " \e[1;36m fetch-all\e[0m: Pull all repository info, without merging (including /Shared* repositories)."
-    echo -e " \e[1;36m clone-btr <type> <name>\e[0m: Clones a KAT repository (\e[1;36mgit clone-btr /?\e[0m for help)."
-    echo -e " \e[1;36m set-origin <type>\e[0m: Updates KAT repository configuration (\e[1;36mgit set-origin /?\e[0m for help)."
-    echo -e " \e[1;36m co-rb <remote> <branch>\e[0m: Pulls a remote branch and switches to it for editing."; \
-    echo -e " \e[1;36m del-rb <remote> <branch>\e[0m: Deletes both the local and remote branches."; \
+    echo -e "\033[1;31m Repository Helpers\033[0m"
+    echo -e " \033[1;36m pull-all\033[0m: Pull all repositories, merging changes in (including /Shared* repositories)."
+    echo -e " \033[1;36m fetch-all\033[0m: Pull all repository info, without merging (including /Shared* repositories)."
+    echo -e " \033[1;36m clone-btr <type> <name>\033[0m: Clones a KAT repository (\033[1;36mgit clone-btr /?\033[0m for help)."
+    echo -e " \033[1;36m set-origin <type>\033[0m: Updates KAT repository configuration (\033[1;36mgit set-origin /?\033[0m for help)."
+    echo -e " \033[1;36m co-rb <remote> <branch>\033[0m: Pulls a remote branch and switches to it for editing."; \
+    echo -e " \033[1;36m del-rb <remote> <branch>\033[0m: Deletes both the local and remote branches."; \
 
     echo ""
-    echo -e "\e[1;31m Repository Merge Helpers\e[0m"
-    echo -e " \e[1;36m sync-with <branch>\e[0m: Pull all commits from <branch> into the current branch (i.e. pulling main commits into feature branch)."
-    echo -e " \e[1;36m merge-squash <feature-branch>\e[0m: Pull all changes from <feature-branch> into the current branch for single (merge) commit."
+    echo -e "\033[1;31m Repository Merge Helpers\033[0m"
+    echo -e " \033[1;36m sync-with <branch>\033[0m: Pull all commits from <branch> into the current branch (i.e. pulling main commits into feature branch)."
+    echo -e " \033[1;36m merge-squash <feature-branch>\033[0m: Pull all changes from <feature-branch> into the current branch for single (merge) commit."
 
     echo ""
-    echo -e "\e[1;31m Repository Detail Helpers\e[0m"
-    echo -e " \e[1;36m tracked\e[0m: Displays files tracked in a repository."
-    echo -e " \e[1;36m ignored\e[0m: Displays files not tracked in a repository."
-    echo -e " \e[1;36m deletes\e[0m: Displays commits with files deleted from a repository (\e[1;36mgit deletes /?\e[0m for help)."
-    echo -e " \e[1;36m rf, remove-file\e[0m: Removes file from repository tracking (i.e. file newly added to .gitignore)."
+    echo -e "\033[1;31m Repository Detail Helpers\033[0m"
+    echo -e " \033[1;36m tracked\033[0m: Displays files tracked in a repository."
+    echo -e " \033[1;36m ignored\033[0m: Displays files not tracked in a repository."
+    echo -e " \033[1;36m deletes\033[0m: Displays commits with files deleted from a repository (\033[1;36mgit deletes /?\033[0m for help)."
+    echo -e " \033[1;36m rf, remove-file\033[0m: Removes file from repository tracking (i.e. file newly added to .gitignore)."
 
 }
