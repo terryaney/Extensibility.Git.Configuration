@@ -115,7 +115,7 @@ queueBuild() {
 	# Convert the leading '/c/' to 'C:\' (assuming the path is on the C: drive)
 	csprojFilePath=$(echo "$csprojFilePath" | sed 's|^\\c\\|C:\\|')
 
-    lprunPath="lprun.exe"
+    lprunPath="lprun8.exe"
     scriptPath="C:\BTR\Extensibility\Build.Scripts\Build.Events.linq"
 
     # Define the arguments
