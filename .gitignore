@@ -55,7 +55,9 @@ Shared*/
 !.gitconfig.user
 !wwwroot/clients/
 
-node_modules/
+node_modules/*
+src/node_modules/*
+package-lock.json
 out/
 
 # Camelot / .NET Core
