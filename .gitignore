@@ -31,6 +31,8 @@ _UpgradeReport_Files/
 
 # MadHatter Admin
 Clients/
+# client skins
+!wwwroot/clients/
 Assemblies/
 _Assemblies.Restart/
 
@@ -38,12 +40,9 @@ Backup/
 _Developer/Help/
 
 # Evolution nested repositories
-Shared*/*
-!**/Views/Shared*/*
-!Pages/Shared/*
-!src/Pages/Shared/*
-# Negate MadHatter Admin Clients/
-!wwwroot/clients/
+/Shared*/
+!**/Views/Shared/*
+!**/Pages/Shared/*
 
 # Node/Typescript
 node_modules/*
