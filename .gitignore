@@ -23,38 +23,29 @@ Thumbs.db
 .gitRepo
 *.t4properties
 
-Zombie/
-_Archive/
-
-deploy
-deploy/*
 [Oo]bj/
 [Bb]in/
 packages/
 _UpgradeReport_Files/
 .vs/
 
+# MadHatter Admin
 Clients/
 Assemblies/
 _Assemblies.Restart/
 
 Backup/
 _Developer/Help/
-Rbl/Setup/
-System Monitor/
-SSOTest/
-Data/BTR.DataLocker/TestClient/
-Rbl/BTR.Broker/Config/
-Rbl/BTR.Broker/Logs/
-Rbl/BTR.Broker/ModelingPreview/
 
-Functions/
-Shared*/
-!**/Views/Shared*/
-!Pages/Shared/
-!.gitconfig.user
+# Evolution nested repositories
+Shared*/*
+!**/Views/Shared*/*
+!Pages/Shared/*
+!src/Pages/Shared/*
+# Negate MadHatter Admin Clients/
 !wwwroot/clients/
 
+# Node/Typescript
 node_modules/*
 src/node_modules/*
 package-lock.json
@@ -64,8 +55,9 @@ out/
 secrets.*.json
 Directory.Build.props
 AssemblyInfo.generated.cs
-!.deploy/**
 *.Releases/
 **/tests/**/TestResults/
-_SvcOffline.txt
-SvcOffline.txt
+*SvcOffline.txt
+
+# KAT Git Files
+!.gitconfig.user
