@@ -80,7 +80,7 @@ case "$2" in *Extensibility.Camelot.Excel.KAT.git.DISABLED)
 esac
 
 # If the original repository to which the push is being done is NOT gh
-if [ "$1" != "gh" ]; then
+if [ "$1" != "gh" ] && [[ "$2" != :* ]]; then
 	# Check if there is a remote named 'gh'
 	if git remote | grep -q '^gh$'; then
 		echo "Pushing to Github..."
