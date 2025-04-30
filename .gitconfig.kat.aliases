@@ -77,11 +77,5 @@
   z-sync-with = !sh -c 'git rebase "$0"'
   z-merge-squash = !sh -c 'git merge --squash "$0"'
   
-  # http://mikewest.org/2011/04/a-quick-git-vim-workflow-tip
-  # List Files Changed in commit (if not provided, does last/HEAD) and it's previous commit
-  ch-old = !sh -c 'git show --pretty="format:" --name-only ${1-HEAD}${2+ $2} | grep -v "^$" | uniq | sed -e "s#^#`git rev-parse --show-toplevel`/#"' -
-  
   # List Files Changed On a Commit *update help*
-  # http://stackoverflow.com/a/424142/166231
-  # Is this same thing? git show --pretty="format:" --name-status ${1-HEAD}
-  ch = !sh -c 'git show --pretty="format:" --name-status ${1-HEAD}${2+ $2}' -
+  ch = !sh -c 'git diff --name-status ${1-HEAD~} ${2-HEAD}' -
