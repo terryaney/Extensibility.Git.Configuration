@@ -60,3 +60,4 @@ AssemblyInfo.generated.cs
 
 # KAT Git Files
 !.gitconfig.user
+.publish-local/*
