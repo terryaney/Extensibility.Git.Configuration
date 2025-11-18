@@ -5,13 +5,13 @@
 
   # TODO: Figure out correct way to call external file/function
   # https://stackoverflow.com/questions/46695859/should-i-use-sh-c-or-f-f-in-git-alias-scripts/46698535?noredirect=1#comment97121794_46698535
-  aliases = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && showAliases "$0" "$@"'
+  aliases = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && showAliases "$0" "$@"'
 
-  pub = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && queueBuild'  
-  publish = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && queueBuild'  
-  gh = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && openGitHubInBrowser'  
-  bb = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && openBitbucketInBrowser'  
-  tfs = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && openTFSInBrowser'  
+  pub = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && queueBuild'  
+  publish = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && queueBuild'  
+  gh = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && openGitHubInBrowser'  
+  bb = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && openBitbucketInBrowser'  
+  tfs = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && openTFSInBrowser'  
   ac = !git add -A && git commit -m 
   br = branch
   brr = ls-remote
@@ -19,7 +19,7 @@
   com = commit
   commend = !sh -c 'git add . && git commit --amend' -
   st = status --short --branch
-  l = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && showMyLog "$0" "$@"'
+  l = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && showMyLog "$0" "$@"'
   his = log --pretty=format:\"%C(auto)%h%Creset %C(green)%ad%Creset | %s %C(bold cyan)<%an>%C(green)%d%Creset\" --graph --date=short
 
   u = undo
@@ -33,7 +33,7 @@
   rf = remove-file
   remove-file = !git z-remove-file
   
-  fhs = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && showFileHistory "$0" "$@"'
+  fhs = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && showFileHistory "$0" "$@"'
   ch-b = !git z-ch-b
   dt = !git z-dt
   dt-c = !git z-dt-c
@@ -42,8 +42,8 @@
   dt-w = !git z-dt-w
   
   tracked = !git ls-files
-  deletes = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && showDeletes "$0" "$@"'
-  ignored = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && showIgnored "$0" "$@"'
+  deletes = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && showDeletes "$0" "$@"'
+  ignored = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && showIgnored "$0" "$@"'
   #ignored = !git ls-files . --ignored --exclude-standard --others
 
   fetch-all = !git z-fetch-all
@@ -57,22 +57,22 @@
   merge-squash = !git z-merge-squash
 
   # Named with z- and called from 'normal' alias so GitTabExpansion is easier to work with
-  z-fetch-all = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && fetchAllRepositories "$0" "$@"'
-  z-pull-all = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && pullAllRepositories "$0" "$@"'
-  z-del-rb = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && deleteRemoteBranch "$0" "$@"'
-  z-co-rb = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && checkoutRemoteBranch "$0" "$@"'
-  z-dt = "!bash -c 'source $HOME/.gitconfig.kat.aliases.script && runDiffTool \"$0\" \"$@\"' bash"
-  z-dt-w = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && differencesBetweenWDAndHead "$0" "$@"'
-  z-dt-c = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && differencesBetweenCommits "$0" "$@"'
-  z-dt-b = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && differencesBetweenBranches "$0" "$@"'
-  z-dt-s = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && differencesBetweenIndexAndHead "$0" "$@"'
-  z-undo = "!bash -c 'source $HOME/.gitconfig.kat.aliases.script && undoFile \"$0\" \"$@\"' bash"
-  z-set-origin = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && setOrigin "$0" "$@"'
-  z-clone-btr = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && cloneKATRepos "$0" "$@"'
+  z-fetch-all = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && fetchAllRepositories "$0" "$@"'
+  z-pull-all = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && pullAllRepositories "$0" "$@"'
+  z-del-rb = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && deleteRemoteBranch "$0" "$@"'
+  z-co-rb = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && checkoutRemoteBranch "$0" "$@"'
+  z-dt = "!bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && runDiffTool \"$0\" \"$@\"' bash"
+  z-dt-w = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && differencesBetweenWDAndHead "$0" "$@"'
+  z-dt-c = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && differencesBetweenCommits "$0" "$@"'
+  z-dt-b = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && differencesBetweenBranches "$0" "$@"'
+  z-dt-s = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && differencesBetweenIndexAndHead "$0" "$@"'
+  z-undo = "!bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && undoFile \"$0\" \"$@\"' bash"
+  z-set-origin = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && setOrigin "$0" "$@"'
+  z-clone-btr = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && cloneKATRepos "$0" "$@"'
   z-unstage-all = reset HEAD
-  z-previous = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && pullPreviousFile "$0" "$@"'
-  z-undelete = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && undeleteFile "$0" "$@"'
-  z-ch-b = !bash -c 'source $HOME/.gitconfig.kat.aliases.script && fileChangesBetweenBranches "$0" "$@"'
+  z-previous = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && pullPreviousFile "$0" "$@"'
+  z-undelete = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && undeleteFile "$0" "$@"'
+  z-ch-b = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && fileChangesBetweenBranches "$0" "$@"'
   z-remove-file = !sh -c 'git rm --cached "$0"'
   z-sync-with = !sh -c 'git rebase "$0"'
   z-merge-squash = !sh -c 'git merge --squash "$0"'

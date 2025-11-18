@@ -1,13 +1,13 @@
 [include]
-  path = ~/.gitconfig.user
-  path = ~/.gitconfig.kat.aliases
-  # path = ~/.gitconfig.my.aliases
+  path = C:/BTR/Extensibility/Git.Configuration/.gitconfig.user
+  path = C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases
 
 [init]
-	defaultBranch = main
+  defaultBranch = main
 
 [core]
-  excludesfile = ~/.gitignore
+  excludesfile = C:/BTR/Extensibility/Git.Configuration/.gitignore
+  hooksPath = C:/BTR/Extensibility/Git.Configuration/.gitHooks
   # https://stackoverflow.com/questions/10418975/how-to-change-line-ending-settings
   # https://stackoverflow.com/questions/5834014/lf-will-be-replaced-by-crlf-in-git-what-is-that-and-is-it-important
   autocrlf = true
