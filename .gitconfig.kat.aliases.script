@@ -115,7 +115,7 @@ queueBuild() {
 	# Convert the leading '/c/' to 'C:\' (assuming the path is on the C: drive)
 	csprojFilePath=$(echo "$csprojFilePath" | sed 's|^\\c\\|C:\\|')
 
-    lprunPath="lprun8.exe"
+    lprunPath="lprun9.exe"
     scriptPath="C:\BTR\Extensibility\Build.Scripts\Build.Events.linq"
 
     # Define the arguments
@@ -397,13 +397,15 @@ undeleteFile() {
 }
 
 differencesBetweenBranches() {
+	# Because of way I pass in parameters, 'bash' is always first param
+	# "!bash -c 'source $HOME/.gitconfig.kat.aliases.script && differencesBetweenBranches \"$0\" \"$@\"' bash"
 
-	if [ "$#" = 1 ] && ( test "$1" == "?" || test "$1" == "-?" || test "$1" == "/?" ) 
+	if [ "$#" = 2 ] && ( test "$2" == "?" || test "$2" == "-?" || test "$2" == "/?" ) 
 	then	
 		showHelp="y"
 	fi
 
-	if [ "$#" != 2 ] || [ "$showHelp" = "y" ]
+	if [ "$#" != 3 ] || [ "$showHelp" = "y" ]
 	then
 
 		echo -e "\n Displays file differences between \033[1;32mbranches\033[0m. usage: git dt-b <branch> <file>\n"
@@ -418,20 +420,22 @@ differencesBetweenBranches() {
 	else
 
 		br=$(git rev-parse --abbrev-ref HEAD)
-		echo "Displaying Differences between $br and $1..."
-		git difftool --no-prompt $br..$1 -- "$2"
+		echo "Displaying Differences between $br and $2..."
+		git difftool --no-prompt $br..$2 -- "$3"
 
 	fi	
 }
 
 differencesBetweenCommits() {
+	# Because of way I pass in parameters, 'bash' is always first param
+	# "!bash -c 'source $HOME/.gitconfig.kat.aliases.script && differencesBetweenCommits \"$0\" \"$@\"' bash"
 
-	if [ "$#" = 1 ] && ( test "$1" == "?" || test "$1" == "-?" || test "$1" == "/?" ) 
+	if [ "$#" = 2 ] && ( test "$2" == "?" || test "$2" == "-?" || test "$2" == "/?" ) 
 	then	
 		showHelp="y"
 	fi
 
-	if [ "$#" -gt 3 ] || [ "$showHelp" = "y" ]
+	if [ "$#" -gt 4 ] || [ "$showHelp" = "y" ]
 	then
 		echo -e "\n Displays differences between \033[1;32mcommits\033[0m, optionally specifiying file pattern.\n"
 	    echo -e " usage:\tgit dt-c {commit1} {commit2} {pattern}"
@@ -449,26 +453,25 @@ differencesBetweenCommits() {
 	    fi
 
 	else
-		commit1="$1"
-		if test "$1" == "bash"
-		then
-			commit1="HEAD"
-		fi
+		commit1="${2-HEAD}"
 
-		echo "Displaying Differences between $commit1 and ${2-$commit1^}..."
-		git difftool --no-prompt $commit1 ${2-$commit1^} ${3+-- "$3"}
+		echo "Displaying Differences between $commit1 and ${3-$commit1^}..."
+		echo "git difftool --no-prompt $commit1 ${3-$commit1^} ${4+-- \"$4\"}"
+		git difftool --no-prompt $commit1 ${3-$commit1^} ${4+-- "$4"}
 
 	fi	
 }
 
 differencesBetweenIndexAndHead() {
+	# Because of way I pass in parameters, 'bash' is always first param
+	# "!bash -c 'source $HOME/.gitconfig.kat.aliases.script && differencesBetweenIndexAndHead \"$0\" \"$@\"' bash"
 
-	if [ "$#" = 1 ] && ( test "$1" == "?" || test "$1" == "-?" || test "$1" == "/?" ) 
+	if [ "$#" = 2 ] && ( test "$2" == "?" || test "$2" == "-?" || test "$2" == "/?" ) 
 	then	
 		showHelp="y"
 	fi
 
-	if [ "$#" -gt 1 ] || [ "$showHelp" = "y" ]
+	if [ "$#" -gt 2 ] || [ "$showHelp" = "y" ]
 	then
 		echo -e "\n Displays differences between \033[1;32mStaging Area\033[0m and \033[1;32mMost Recent Commit\033[0m, optionally specifiying"
 		echo -e " a file pattern. Use this when you have added files with \033[1;36mgit add\033[0m and you want to see the"
@@ -486,24 +489,26 @@ differencesBetweenIndexAndHead() {
 
 	else
 
-		if test "$1" == "bash"
+		if [ "$#" = 1 ]
 		then
 			git difftool --cached --no-prompt
 		else
-			git difftool --cached --no-prompt ${1+-- "$1"}
+			git difftool --cached --no-prompt ${2+-- "$2"}
 		fi
 	
 	fi	
 }
 
 differencesBetweenWDAndHead() {
+	# Because of way I pass in parameters, 'bash' is always first param
+	# "!bash -c 'source $HOME/.gitconfig.kat.aliases.script && differencesBetweenWDAndHead \"$0\" \"$@\"' bash"
 
-	if [ "$#" = 1 ] && ( test "$1" == "?" || test "$1" == "-?" || test "$1" == "/?" ) 
+	if [ "$#" = 2 ] && ( test "$2" == "?" || test "$2" == "-?" || test "$2" == "/?" ) 
 	then	
 		showHelp="y"
 	fi
 
-	if [ "$#" -gt 1 ] || [ "$showHelp" = "y" ]
+	if [ "$#" -gt 2 ] || [ "$showHelp" = "y" ]
 	then
 		echo -e "\n Displays differences between \033[1;32mWorking Directory\033[0m and \033[1;32mMost Recent Commit\033[0m, optionally specifiying"
 		echo -e " a file pattern. Use this when you have added files with \033[1;36mgit add\033[0m and you want to compare"
@@ -521,11 +526,11 @@ differencesBetweenWDAndHead() {
 
 	else
 
-		if test "$1" == "bash"
+		if [ "$#" = 1 ]
 		then
 			git difftool HEAD --no-prompt
 		else
-			git difftool HEAD --no-prompt ${1+-- "$1"}
+			git difftool HEAD --no-prompt ${2+-- "$2"}
 		fi
 	
 	fi	

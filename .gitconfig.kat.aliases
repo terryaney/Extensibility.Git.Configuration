@@ -62,10 +62,10 @@
   z-del-rb = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && deleteRemoteBranch "$0" "$@"'
   z-co-rb = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && checkoutRemoteBranch "$0" "$@"'
   z-dt = "!bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && runDiffTool \"$0\" \"$@\"' bash"
-  z-dt-w = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && differencesBetweenWDAndHead "$0" "$@"'
-  z-dt-c = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && differencesBetweenCommits "$0" "$@"'
-  z-dt-b = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && differencesBetweenBranches "$0" "$@"'
-  z-dt-s = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && differencesBetweenIndexAndHead "$0" "$@"'
+  z-dt-w = "!bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && differencesBetweenWDAndHead \"$0\" \"$@\"' bash"
+  z-dt-c = "!bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && differencesBetweenCommits \"$0\" \"$@\"' bash"
+  z-dt-b = "!bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && differencesBetweenBranches \"$0\" \"$@\"' bash"
+  z-dt-s = "!bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && differencesBetweenIndexAndHead \"$0\" \"$@\"' bash"
   z-undo = "!bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && undoFile \"$0\" \"$@\"' bash"
   z-set-origin = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && setOrigin "$0" "$@"'
   z-clone-btr = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && cloneKATRepos "$0" "$@"'
@@ -78,4 +78,4 @@
   z-merge-squash = !sh -c 'git merge --squash "$0"'
   
   # List Files Changed On a Commit *update help*
-  ch = !sh -c 'git diff --name-status ${1-HEAD~} ${2-HEAD}' -
+  ch = "!bash -c 'set -o noglob; git diff --name-status "\"${1-HEAD~}\"" "\"${2-HEAD}\"" ${3:+-- "\"$3\""}' --"
