@@ -21,6 +21,7 @@
   st = status --short --branch
   l = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && showMyLog "$0" "$@"'
   his = log --pretty=format:\"%C(auto)%h%Creset %C(green)%ad%Creset | %s %C(bold cyan)<%an>%C(green)%d%Creset\" --graph --date=short
+  clean-nul = !find . -name 'nul' -type f -delete
 
   u = undo
   undo = !git z-undo
