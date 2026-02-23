@@ -80,6 +80,3 @@
 
 [credential "https://tfs.acsgs.com"]
 	provider = generic
-
-[http "https://tfs.acsgs.com"]
-	proxy = http://conduent-pos:8888
