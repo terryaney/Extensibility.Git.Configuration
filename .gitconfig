@@ -80,3 +80,7 @@
 
 [credential "https://tfs.acsgs.com"]
 	provider = generic
+
+# Put this in real .gitconfig so that it wasn't pulled into vdi which doesn't have proxy
+#[http "https://tfs.acsgs.com"]
+#	proxy = http://conduent-pos:8888
