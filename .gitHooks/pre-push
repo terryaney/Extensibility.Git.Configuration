@@ -1,52 +1,88 @@
 #!/bin/sh
 
-# If pushing KatApp.git, then also update documentation...
-case "$2" in *KatApp.git.DISABLED)
-	echo ""
-	echo "Updating documentation..."
-	echo ""
-	
-	FILE_TO_COPY="README.md" # replace with the file you want to copy
-	NEW_FILE_NAME="KatApp.md" # replace with the new name you want for the file
-
-	# Set the path to the destination repository and branch name
-	DEST_REPO_PATH="/c/BTR/Documentation/Camelot"
-	DEST_BRANCH="main"
-
-	# Get the name of the current branch and commit hash
-	while read local_ref local_sha remote_ref remote_sha
-	do
-		if [[ $local_ref = refs/heads/main ]]; then
-			CURRENT_BRANCH="main"
-			CURRENT_COMMIT=$(echo "$local_sha" | cut -c1-7)
-		fi
-	done
-
-	# Check if the current branch is "main" and the file to copy exists
-	if [[ $CURRENT_BRANCH == "main" && -f $FILE_TO_COPY ]]; then
-		# Copy the file to the destination repository with the new filename
-		cp "$FILE_TO_COPY" "$DEST_REPO_PATH/$NEW_FILE_NAME"
-
-		# Switch to the destination repository and checkout the destination branch
-		cd "$DEST_REPO_PATH"
-		# git checkout "$DEST_BRANCH"
-
-		# Stage and commit the copied file with the new filename
-		git add "$NEW_FILE_NAME"
-		git commit -m "Automatically updated file $NEW_FILE_NAME from main:KatApp, commit $CURRENT_COMMIT"
-
-		# Push the commit to the destination repository
-		git push origin "$DEST_BRANCH"
+# Read push refs from stdin once — stdin can only be consumed once so this must happen
+# before any case blocks that previously had their own read loops.
+CURRENT_BRANCH=""
+CURRENT_COMMIT=""
+PUSHED_MAIN_SHA=""
+while read local_ref local_sha remote_ref remote_sha
+do
+	if [[ $local_ref = refs/heads/main ]]; then
+		CURRENT_BRANCH="main"
+		PUSHED_MAIN_SHA="$local_sha"
+		CURRENT_COMMIT=$(echo "$local_sha" | cut -c1-7)
 	fi
+done
+
+# Helper: sync a file from the pushed main commit to a documentation repository.
+# Usage: sync_doc_file <source_relative_path> <dest_file_name> <dest_repo_path> <dest_branch> <repo_label>
+sync_doc_file() {
+	local SOURCE_FILE_RELATIVE="$1"
+	local DESTINATION_FILE_NAME="$2"
+	local DEST_REPO_PATH="$3"
+	local DEST_BRANCH="$4"
+	local REPO_LABEL="$5"
+
+	[ "$CURRENT_BRANCH" = "main" ] || return
+
+	local REPO_ROOT
+	REPO_ROOT="$(git rev-parse --show-toplevel)"
+	local PUSHED_SOURCE_TMP="$REPO_ROOT/.git/doc-sync-$CURRENT_COMMIT.md"
+
+	# Use the file content from the pushed commit, not local working tree state
+	if git show "$PUSHED_MAIN_SHA:$SOURCE_FILE_RELATIVE" > "$PUSHED_SOURCE_TMP" 2>/dev/null; then
+		# Unset git env vars so operations on the dest repo are not confused by source repo's GIT_DIR
+		local SAVED_GIT_DIR="${GIT_DIR:-}"
+		local SAVED_GIT_WORK_TREE="${GIT_WORK_TREE:-}"
+		unset GIT_DIR GIT_WORK_TREE
+
+		# Skip sync when destination docs file has local unstaged/staged changes
+		if ! git -C "$DEST_REPO_PATH" diff --quiet -- "$DESTINATION_FILE_NAME" 2>/dev/null || \
+		   ! git -C "$DEST_REPO_PATH" diff --cached --quiet -- "$DESTINATION_FILE_NAME" 2>/dev/null; then
+			echo "Camelot Documentation Sync did not occur because the file has unstaged/uncommitted changes."
+		# Only sync if the file content has changed
+		elif diff -q "$PUSHED_SOURCE_TMP" "$DEST_REPO_PATH/$DESTINATION_FILE_NAME" > /dev/null 2>&1; then
+			echo "Camelot Documentation Sync skipped — destination file is already up to date."
+		else
+			cp "$PUSHED_SOURCE_TMP" "$DEST_REPO_PATH/$DESTINATION_FILE_NAME"
+			git -C "$DEST_REPO_PATH" add "$DESTINATION_FILE_NAME"
+			git -C "$DEST_REPO_PATH" commit -m "Automatically updated file $DESTINATION_FILE_NAME from main:$REPO_LABEL, commit $CURRENT_COMMIT"
+			git -C "$DEST_REPO_PATH" push origin "$DEST_BRANCH"
+		fi
+
+	[ -n "$SAVED_GIT_DIR" ] && export GIT_DIR="$SAVED_GIT_DIR"
+	[ -n "$SAVED_GIT_WORK_TREE" ] && export GIT_WORK_TREE="$SAVED_GIT_WORK_TREE"
+	fi
+
+	rm -f "$PUSHED_SOURCE_TMP"
+}
+
+# Documentation sync for all repos — skip if this is an internal mirror push
+if [ "${DOC_SYNC_SKIP:-0}" != "1" ]; then
+
+case "$2" in *tfs.acsgs.com/tfs/PDSI/HRS2/_git/HRS%20BTR%20-%20rcl.camelot.katapp|*github.com/terryaney/Camelot.RCL.KatApp.git)
+	echo ""
+	echo "Updating KatApp documentation..."
+	echo ""
+	sync_doc_file "src/KatApp.md" "KatApp.md" "/c/BTR/Documentation/Camelot" "main" "Camelot.RCL.KatApp"
 esac
+
+case "$2" in *tfs.acsgs.com/tfs/PDSI/HRS2/_git/HRS%20BTR%20-%20ess.camelot.nexgen|*github.com/terryaney/Camelot.ESS.Nexgen.git)
+	echo ""
+	echo "Updating Nexgen documentation..."
+	echo ""
+	sync_doc_file ".vscode/Documentation/CalcEngines.md" "Nexgen/CalcEngines.md" "/c/BTR/Documentation/Camelot" "main" "Camelot.ESS.Nexgen"
+esac
+
+fi
 
 case "$2" in *Extensibility.Camelot.Excel.KAT.git.DISABLED)
 	echo ""
 	echo "Updating Excel-DNA documentation..."
 	echo ""
 	
-	FILE_TO_COPY="Readme.md" # replace with the file you want to copy
-	NEW_FILE_NAME="Readme.md" # replace with the new name you want for the file
+	SOURCE_FILE="Readme.md" # replace with the file you want to copy
+	DESTINATION_FILE_NAME="Readme.md" # replace with the new name you want for the file
 
 	# Set the path to the destination repository and branch name
 	DEST_REPO_PATH="/c/BTR/OpenSource/Extensibility.ExcelDNA.Sample"
@@ -62,17 +98,17 @@ case "$2" in *Extensibility.Camelot.Excel.KAT.git.DISABLED)
 	done
 
 	# Check if the current branch is "main" and the file to copy exists
-	if [[ $CURRENT_BRANCH == "main" && -f $FILE_TO_COPY ]]; then
+	if [ "$CURRENT_BRANCH" = "main" ] && [ -f "$SOURCE_FILE" ]; then
 		# Copy the file to the destination repository with the new filename
-		cp "$FILE_TO_COPY" "$DEST_REPO_PATH/$NEW_FILE_NAME"
+		cp "$SOURCE_FILE" "$DEST_REPO_PATH/$DESTINATION_FILE_NAME"
 
 		# Switch to the destination repository and checkout the destination branch
 		cd "$DEST_REPO_PATH"
 		# git checkout "$DEST_BRANCH"
 
 		# Stage and commit the copied file with the new filename
-		git add "$NEW_FILE_NAME"
-		git commit -m "Automatically updated file $NEW_FILE_NAME from main:Extensibility.Camelot.Excel.KAT, commit $CURRENT_COMMIT"
+		git add "$DESTINATION_FILE_NAME"
+		git commit -m "Automatically updated file $DESTINATION_FILE_NAME from main:Extensibility.Camelot.Excel.KAT, commit $CURRENT_COMMIT"
 
 		# Push the commit to the destination repository
 		git push origin "$DEST_BRANCH"
@@ -85,7 +121,7 @@ if [ "$1" != "gh" ] && [ "$1" != "conduent" ] && [[ "$2" != :* ]]; then
 	if git remote | grep -q '^gh$'; then
 		echo "Pushing to Github..."
 		echo ""
-		git push gh
+		DOC_SYNC_SKIP=1 git push gh
 		echo ""
 		echo "Github push complete."
 		echo ""
