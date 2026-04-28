@@ -26,6 +26,9 @@
 [branch "main"]
   rebase = true
 
+[fetch]
+  prune = true
+
 [merge]
   # Always merge with --no-ff
   # https://nvie.com/posts/a-successful-git-branching-model/
