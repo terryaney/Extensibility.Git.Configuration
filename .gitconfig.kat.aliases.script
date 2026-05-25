@@ -874,6 +874,20 @@ squashLastNCommits() {
 		return 0
 	fi
 
+	local ahead
+	ahead=$(git rev-list --count @{u}..HEAD 2>/dev/null)
+
+	if [ $? -eq 0 ] && [ -n "$ahead" ] && [ "$n" -gt "$ahead" ]; then
+		local pushed=$(( n - ahead ))
+		echo -e "\n\033[1;33m Warning:\033[0m $pushed of the $n commits have already been pushed to origin."
+		echo -e " Squashing them will require a \033[1;31mforce push\033[0m to update the remote.\n"
+		read -r -p " Continue? [y/N] " confirm
+		if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+			echo -e "\n Aborted."
+			exit 1
+		fi
+	fi
+
 	local messages
 	messages=$(git log --format="# --- Commit: %h (%ad) ---%n%s%n%n%b" --date=short --reverse -"$n")
 
