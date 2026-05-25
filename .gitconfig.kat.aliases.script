@@ -860,6 +860,27 @@ setOrigin () {
 	fi
 }
 
+squashLastNCommits() {
+	local n="$1"
+
+	if [ "$#" = 0 ] || [ "$1" = "bash" ] || ! [[ "$n" =~ ^[0-9]+$ ]] || [ "$n" -lt 2 ]; then
+		echo -e "\n Squashes the last N commits into one, opening editor with all commit messages pre-filled.\n"
+		echo -e " usage: git squash-last <number>"
+		echo -e " example: git squash-last 3"
+		if [ "$#" != 0 ] && [ "$1" != "bash" ]; then
+			echo -e "\n\033[1;31m Incorrect parameters provided. Number must be 2 or greater.\033[0m"
+			exit 1
+		fi
+		return 0
+	fi
+
+	local messages
+	messages=$(git log --format="# --- Commit: %h (%ad) ---%n%s%n%n%b" --date=short --reverse -"$n")
+
+	git reset --soft HEAD~"$n"
+	git commit -e -m "$messages"
+}
+
 showAliases() {
 	# \033[1;31m ... \033[0m - Red font
 
@@ -906,6 +927,7 @@ showAliases() {
     echo -e " \033[1;36m set-origin <type>\033[0m: Updates KAT repository configuration (\033[1;36mgit set-origin /?\033[0m for help)."
     echo -e " \033[1;36m co-rb <remote> <branch>\033[0m: Pulls a remote branch and switches to it for editing."; \
     echo -e " \033[1;36m del-rb <remote> <branch>\033[0m: Deletes both the local and remote branches."; \
+    echo -e " \033[1;36m squash-last <number>\033[0m: Squashes the last N commits into one, opening editor with all commit messages pre-filled."
 
     echo ""
     echo -e "\033[1;31m Repository Merge Helpers\033[0m"

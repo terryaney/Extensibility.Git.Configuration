@@ -54,6 +54,10 @@
   del-rb = !git z-del-rb
   co-rb = !git z-co-rb
 
+  # Helpers for AI enhancement
+  squash-last = !git z-squash-last
+
+  # Branch helpers
   sync-with = !git z-sync-with
   merge-squash = !git z-merge-squash
 
@@ -77,6 +81,7 @@
   z-remove-file = !sh -c 'git rm --cached "$0"'
   z-sync-with = !sh -c 'git rebase "$0"'
   z-merge-squash = !sh -c 'git merge --squash "$0"'
+  z-squash-last = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && squashLastNCommits "$0" "$@"'
   
   # List Files Changed On a Commit *update help*
   ch = "!bash -c 'set -o noglob; git diff --name-status "\"${1-HEAD~}\"" "\"${2-HEAD}\"" ${3:+-- "\"$3\""}' --"
