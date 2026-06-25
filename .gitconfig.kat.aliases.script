@@ -371,6 +371,44 @@ fileChangesBetweenBranches() {
 	fi	
 }
 
+fileChangesBetweenCommits() {
+	# Bash-backed aliases pass a shell marker as first argument.
+	if [ "$1" = "bash" ]
+	then
+		shift
+	fi
+
+	if [ "$#" = 1 ] && ( test "$1" == "?" || test "$1" == "-?" || test "$1" == "/?" )
+	then
+		showHelp="y"
+	fi
+
+	if [ "$#" -gt 3 ] || [ "$showHelp" = "y" ]
+	then
+		echo -e "\n Displays all files changed between \033[1;32mcommits\033[0m.\n"
+		echo -e " usage: git ch {newerCommit} {olderCommit} {pattern}"
+		echo -e " defaults: newerCommit - HEAD, olderCommit - HEAD~, pattern - all files"
+		echo ""
+		echo -e " \033[1;36m git ch\033[0m displays all changed files between HEAD~ and HEAD"
+		echo -e " \033[1;36m git ch HEAD HEAD~2\033[0m displays all changed files between HEAD~2 and HEAD"
+		echo -e " \033[1;36m git ch HEAD HEAD~2 readme.txt\033[0m filters changes to readme.txt"
+
+		if [ "$showHelp" != "y" ]
+		then
+			echo -e "\n\033[1;31m Incorrect parameters provided.\033[0m"
+			exit 1
+		fi
+	else
+		newerCommit=${1-HEAD}
+		olderCommit=${2-HEAD~}
+
+		echo "Listing file changes between $olderCommit and $newerCommit..."
+
+		# Intentionally reversed so callers can provide newer commit first.
+		git diff --name-status "$olderCommit" "$newerCommit" ${3+-- "$3"}
+	fi
+}
+
 undeleteFile() {
 
 	if [ "$#" = 1 ] && ( test "$1" == "?" || test "$1" == "-?" || test "$1" == "/?" ) 

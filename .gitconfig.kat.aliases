@@ -35,6 +35,7 @@
   remove-file = !git z-remove-file
   
   fhs = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && showFileHistory "$0" "$@"'
+  ch = !git z-ch
   ch-b = !git z-ch-b
   dt = !git z-dt
   dt-c = !git z-dt-c
@@ -77,11 +78,9 @@
   z-unstage-all = reset HEAD
   z-previous = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && pullPreviousFile "$0" "$@"'
   z-undelete = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && undeleteFile "$0" "$@"'
+  z-ch = "!bash -c 'set -o noglob; source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && fileChangesBetweenCommits \"$0\" \"$@\"' bash"
   z-ch-b = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && fileChangesBetweenBranches "$0" "$@"'
   z-remove-file = !sh -c 'git rm --cached "$0"'
   z-sync-with = !sh -c 'git rebase "$0"'
   z-merge-squash = !sh -c 'git merge --squash "$0"'
   z-squash-last = !bash -c 'source C:/BTR/Extensibility/Git.Configuration/.gitconfig.kat.aliases.script && squashLastNCommits "$0" "$@"'
-  
-  # List Files Changed On a Commit *update help*
-  ch = "!bash -c 'set -o noglob; git diff --name-status "\"${1-HEAD~}\"" "\"${2-HEAD}\"" ${3:+-- "\"$3\""}' --"
