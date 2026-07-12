@@ -2,6 +2,9 @@
 	email = terry.aney@icloud.com
 	name = Terry Aney
 
+[credential "https://github.com"]
+	username = terryaney
+
 [core]
   # editor = notepad
   editor = "code -w --disable-extensions"

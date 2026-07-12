@@ -61,3 +61,6 @@ AssemblyInfo.generated.cs
 # KAT Git Files
 !.gitconfig.user
 .publish-local/*
+
+# AI Plans - not sure I want these ignored yet
+# .vscode/Plans
