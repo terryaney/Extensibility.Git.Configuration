@@ -83,6 +83,20 @@ case "$2" in *tfs.acsgs.com/tfs/PDSI/HRS2/_git/HRS%20BTR%20-%20ess.camelot.nexge
 	sync_doc_files ".vscode/Documentation/" 'CalcEngines.*\.md$' "Nexgen" "/c/BTR/Documentation/Camelot" "main" "Camelot.ESS.Nexgen"
 esac
 
+case "$2" in *tfs.acsgs.com/tfs/PDSI/HRS2/_git/HRS%20BTR%20-%20extensibility.camelot.excel.addin|*github.com/terryaney/Extensibility.Camelot.Excel.KAT.git)
+	echo ""
+	echo "Updating RBLe ExcelAddIn documentation..."
+	echo ""
+	sync_doc_files ".vscode/Documentation/" 'ExcelAddIn\.md$' "RBLe" "/c/BTR/Documentation/Camelot" "main" "Extensibility.Camelot.Excel.AddIn"
+esac
+
+case "$2" in *tfs.acsgs.com/tfs/PDSI/HRS2/_git/HRS%20BTR%20-%20core.camelot.rble|*github.com/terryaney/Camelot.Core.RBLe.git)
+	echo ""
+	echo "Updating RBLe CalcEngines documentation..."
+	echo ""
+	sync_doc_files ".vscode/Documentation/" 'CalcEngines\.md$' "RBLe" "/c/BTR/Documentation/Camelot" "main" "Camelot.Core.RBLe"
+esac
+
 fi
 
 case "$2" in *Extensibility.Camelot.Excel.KAT.git.DISABLED)
