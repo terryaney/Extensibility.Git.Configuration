@@ -14,7 +14,44 @@ do
 	fi
 done
 
+# Helper: copy one blob from the pushed main commit into the documentation repository and stage it.
+# Returns 0 only when the destination was actually updated.
+# Usage: stage_doc_file <src_file> <dest_name> <dest_repo_path> <repo_root>
+stage_doc_file() {
+	local SRC_FILE="$1"
+	local DEST_NAME="$2"
+	local DEST_REPO_PATH="$3"
+	local REPO_ROOT="$4"
+
+	local tmp_file="$REPO_ROOT/.git/doc-sync-$CURRENT_COMMIT-$(basename "$SRC_FILE")"
+
+	if ! git show "$PUSHED_MAIN_SHA:$SRC_FILE" > "$tmp_file" 2>/dev/null; then
+		rm -f "$tmp_file"
+		return 1
+	fi
+
+	if ! git -C "$DEST_REPO_PATH" diff --quiet -- "$DEST_NAME" 2>/dev/null || \
+	   ! git -C "$DEST_REPO_PATH" diff --cached --quiet -- "$DEST_NAME" 2>/dev/null; then
+		echo "Camelot Documentation Sync skipped $DEST_NAME — destination has unstaged/uncommitted changes."
+		rm -f "$tmp_file"
+		return 1
+	fi
+
+	if diff -q "$tmp_file" "$DEST_REPO_PATH/$DEST_NAME" > /dev/null 2>&1; then
+		echo "Camelot Documentation Sync skipped $DEST_NAME — already up to date."
+		rm -f "$tmp_file"
+		return 1
+	fi
+
+	mkdir -p "$(dirname "$DEST_REPO_PATH/$DEST_NAME")"
+	cp "$tmp_file" "$DEST_REPO_PATH/$DEST_NAME"
+	git -C "$DEST_REPO_PATH" add "$DEST_NAME"
+	rm -f "$tmp_file"
+	return 0
+}
+
 # Helper: sync all files matching a pattern from the pushed main commit to a documentation repository as one commit.
+# Source folder structure is flattened — every match lands directly in <dest_subfolder>.
 # Usage: sync_doc_files <src_dir> <file_pattern> <dest_subfolder> <dest_repo_path> <dest_branch> <repo_label>
 sync_doc_files() {
 	local SRC_DIR="$1"
@@ -35,27 +72,47 @@ sync_doc_files() {
 	unset GIT_DIR GIT_WORK_TREE
 
 	while IFS= read -r src_file; do
-		local dest_name="$DEST_SUBFOLDER/$(basename "$src_file")"
-		local tmp_file="$REPO_ROOT/.git/doc-sync-$CURRENT_COMMIT-$(basename "$src_file")"
-
-		if ! git show "$PUSHED_MAIN_SHA:$src_file" > "$tmp_file" 2>/dev/null; then
-			rm -f "$tmp_file"
-			continue
+		if stage_doc_file "$src_file" "$DEST_SUBFOLDER/$(basename "$src_file")" "$DEST_REPO_PATH" "$REPO_ROOT"; then
+			STAGED="$STAGED $DEST_SUBFOLDER/$(basename "$src_file")"
 		fi
-
-		if ! git -C "$DEST_REPO_PATH" diff --quiet -- "$dest_name" 2>/dev/null || \
-		   ! git -C "$DEST_REPO_PATH" diff --cached --quiet -- "$dest_name" 2>/dev/null; then
-			echo "Camelot Documentation Sync skipped $dest_name — destination has unstaged/uncommitted changes."
-		elif diff -q "$tmp_file" "$DEST_REPO_PATH/$dest_name" > /dev/null 2>&1; then
-			echo "Camelot Documentation Sync skipped $dest_name — already up to date."
-		else
-			cp "$tmp_file" "$DEST_REPO_PATH/$dest_name"
-			git -C "$DEST_REPO_PATH" add "$dest_name"
-			STAGED="$STAGED $dest_name"
-		fi
-
-		rm -f "$tmp_file"
 	done < <(git ls-tree --name-only "$PUSHED_MAIN_SHA" "$SRC_DIR" 2>/dev/null | grep "$FILE_PATTERN")
+
+	if [ -n "$STAGED" ]; then
+		git -C "$DEST_REPO_PATH" commit -m "Automatically updated $DEST_SUBFOLDER docs from main:$REPO_LABEL, commit $CURRENT_COMMIT"
+		git -C "$DEST_REPO_PATH" push origin "$DEST_BRANCH"
+	fi
+
+	[ -n "$SAVED_GIT_DIR" ] && export GIT_DIR="$SAVED_GIT_DIR"
+	[ -n "$SAVED_GIT_WORK_TREE" ] && export GIT_WORK_TREE="$SAVED_GIT_WORK_TREE"
+}
+
+# Helper: sync files and/or folders (recursive) from the pushed main commit, preserving the source
+# folder structure underneath <dest_subfolder>, as one commit.
+# Usage: sync_doc_paths <dest_subfolder> <dest_repo_path> <dest_branch> <repo_label> <src_path>...
+sync_doc_paths() {
+	local DEST_SUBFOLDER="$1"; shift
+	local DEST_REPO_PATH="$1"; shift
+	local DEST_BRANCH="$1"; shift
+	local REPO_LABEL="$1"; shift
+
+	[ "$CURRENT_BRANCH" = "main" ] || return
+
+	local REPO_ROOT
+	REPO_ROOT="$(git rev-parse --show-toplevel)"
+	local STAGED=""
+
+	local SAVED_GIT_DIR="${GIT_DIR:-}"
+	local SAVED_GIT_WORK_TREE="${GIT_WORK_TREE:-}"
+	unset GIT_DIR GIT_WORK_TREE
+
+	local src_path src_file
+	for src_path in "$@"; do
+		while IFS= read -r src_file; do
+			if stage_doc_file "$src_file" "$DEST_SUBFOLDER/$src_file" "$DEST_REPO_PATH" "$REPO_ROOT"; then
+				STAGED="$STAGED $DEST_SUBFOLDER/$src_file"
+			fi
+		done < <(git ls-tree -r --name-only "$PUSHED_MAIN_SHA" -- "$src_path" 2>/dev/null)
+	done
 
 	if [ -n "$STAGED" ]; then
 		git -C "$DEST_REPO_PATH" commit -m "Automatically updated $DEST_SUBFOLDER docs from main:$REPO_LABEL, commit $CURRENT_COMMIT"
@@ -95,6 +152,13 @@ case "$2" in *tfs.acsgs.com/tfs/PDSI/HRS2/_git/HRS%20BTR%20-%20core.camelot.rble
 	echo "Updating RBLe CalcEngines documentation..."
 	echo ""
 	sync_doc_files ".vscode/Documentation/" 'CalcEngines\.md$' "RBLe" "/c/BTR/Documentation/Camelot" "main" "Camelot.Core.RBLe"
+esac
+
+case "$2" in *tfs.acsgs.com/tfs/PDSI/HRS2/_git/HRS%20BTR%20-%20extensibility.camelot.tfs.build.release|*github.com/terryaney/Extensibility.Camelot.TFS.Build.Release.git)
+	echo ""
+	echo "Updating TFS.Build.Release documentation..."
+	echo ""
+	sync_doc_paths "TFS.Build.Release" "/c/BTR/Documentation/Camelot" "main" "Extensibility.Camelot.TFS.Build.Release" "Readme.md" "Assets"
 esac
 
 fi
@@ -138,16 +202,40 @@ case "$2" in *Extensibility.Camelot.Excel.KAT.git.DISABLED)
 	fi
 esac
 
-# If the original repository to which the push is being done is NOT gh or conduent
-if [ "$1" != "gh" ] && [ "$1" != "conduent" ] && [[ "$2" != :* ]]; then
-	# Check if there is a remote named 'gh'
-	if git remote | grep -q '^gh$'; then
-		echo "Pushing to Github..."
-		echo ""
-		DOC_SYNC_SKIP=1 git push gh
-		echo ""
-		echo "Github push complete."
-		echo ""
+# GitHub mirrors pushed automatically after an origin push. Each name must be a configured
+# remote whose URL carries its own account (https://<account>@github.com/...) so the
+# credential manager hands each push the matching GitHub identity.
+MIRROR_REMOTES="gh gh-conduent"
+
+is_mirror_remote() {
+	local candidate="$1"
+	local remote
+	for remote in $MIRROR_REMOTES; do
+		[ "$candidate" = "$remote" ] && return 0
+	done
+	return 1
+}
+
+# Only mirror when the push targets the primary remote by name (not a URL, not a mirror itself)
+if ! is_mirror_remote "$1" && [ "$1" != "conduent" ] && [[ "$2" != :* ]]; then
+	MIRRORED=0
+	for mirror in $MIRROR_REMOTES; do
+		if git remote | grep -q "^${mirror}$"; then
+			MIRRORED=1
+			echo "Pushing to Github ($mirror)..."
+			echo ""
+			if DOC_SYNC_SKIP=1 git push "$mirror"; then
+				echo ""
+				echo "Github push complete ($mirror)."
+			else
+				echo ""
+				echo "WARNING: push to $mirror failed — continuing with $1."
+			fi
+			echo ""
+		fi
+	done
+
+	if [ "$MIRRORED" = "1" ]; then
 		echo "Pushing to $1..."
 		echo ""
 	fi
