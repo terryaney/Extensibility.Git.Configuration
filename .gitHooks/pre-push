@@ -130,35 +130,35 @@ case "$2" in *tfs.acsgs.com/tfs/PDSI/HRS2/_git/HRS%20BTR%20-%20rcl.camelot.katap
 	echo ""
 	echo "Updating KatApp documentation..."
 	echo ""
-	sync_doc_files ".vscode/Documentation/" 'KatApp.*\.md$' "KatApp" "/c/BTR/Documentation/Camelot" "main" "Camelot.RCL.KatApp"
+	sync_doc_files ".vscode/Documentation/" 'KatApp.*\.md$' "KatApp" "/c/BTR/Documentation/KAT" "main" "Camelot.RCL.KatApp"
 esac
 
 case "$2" in *tfs.acsgs.com/tfs/PDSI/HRS2/_git/HRS%20BTR%20-%20ess.camelot.nexgen|*github.com/terryaney/Camelot.ESS.Nexgen.git)
 	echo ""
 	echo "Updating Nexgen documentation..."
 	echo ""
-	sync_doc_files ".vscode/Documentation/" 'CalcEngines.*\.md$' "Nexgen" "/c/BTR/Documentation/Camelot" "main" "Camelot.ESS.Nexgen"
+	sync_doc_files ".vscode/Documentation/" 'CalcEngines.*\.md$' "Nexgen" "/c/BTR/Documentation/KAT" "main" "Camelot.ESS.Nexgen"
 esac
 
 case "$2" in *tfs.acsgs.com/tfs/PDSI/HRS2/_git/HRS%20BTR%20-%20extensibility.camelot.excel.addin|*github.com/terryaney/Extensibility.Camelot.Excel.KAT.git)
 	echo ""
 	echo "Updating RBLe ExcelAddIn documentation..."
 	echo ""
-	sync_doc_files ".vscode/Documentation/" 'ExcelAddIn\.md$' "RBLe" "/c/BTR/Documentation/Camelot" "main" "Extensibility.Camelot.Excel.AddIn"
+	sync_doc_files ".vscode/Documentation/" 'ExcelAddIn\.md$' "RBLe" "/c/BTR/Documentation/KAT" "main" "Extensibility.Camelot.Excel.AddIn"
 esac
 
 case "$2" in *tfs.acsgs.com/tfs/PDSI/HRS2/_git/HRS%20BTR%20-%20core.camelot.rble|*github.com/terryaney/Camelot.Core.RBLe.git)
 	echo ""
 	echo "Updating RBLe CalcEngines documentation..."
 	echo ""
-	sync_doc_files ".vscode/Documentation/" 'CalcEngines\.md$' "RBLe" "/c/BTR/Documentation/Camelot" "main" "Camelot.Core.RBLe"
+	sync_doc_files ".vscode/Documentation/" 'CalcEngines\.md$' "RBLe" "/c/BTR/Documentation/KAT" "main" "Camelot.Core.RBLe"
 esac
 
 case "$2" in *tfs.acsgs.com/tfs/PDSI/HRS2/_git/HRS%20BTR%20-%20extensibility.camelot.tfs.build.release|*github.com/terryaney/Extensibility.Camelot.TFS.Build.Release.git)
 	echo ""
 	echo "Updating TFS.Build.Release documentation..."
 	echo ""
-	sync_doc_paths "TFS.Build.Release" "/c/BTR/Documentation/Camelot" "main" "Extensibility.Camelot.TFS.Build.Release" "Readme.md" "Assets"
+	sync_doc_paths "TFS.Build.Release" "/c/BTR/Documentation/KAT" "main" "Extensibility.Camelot.TFS.Build.Release" "Readme.md" "Assets"
 esac
 
 fi
