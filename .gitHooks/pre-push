@@ -5,11 +5,13 @@
 CURRENT_BRANCH=""
 CURRENT_COMMIT=""
 PUSHED_MAIN_SHA=""
+PUSHED_MAIN_REMOTE_SHA=""
 while read local_ref local_sha remote_ref remote_sha
 do
 	if [[ $local_ref = refs/heads/main ]]; then
 		CURRENT_BRANCH="main"
 		PUSHED_MAIN_SHA="$local_sha"
+		PUSHED_MAIN_REMOTE_SHA="$remote_sha"
 		CURRENT_COMMIT=$(echo "$local_sha" | cut -c1-7)
 	fi
 done
@@ -86,8 +88,9 @@ sync_doc_files() {
 	[ -n "$SAVED_GIT_WORK_TREE" ] && export GIT_WORK_TREE="$SAVED_GIT_WORK_TREE"
 }
 
-# Helper: sync files and/or folders (recursive) from the pushed main commit, preserving the source
-# folder structure underneath <dest_subfolder>, as one commit.
+# Helper: sync files and/or folders (recursive) from the pushed main commit as one commit.
+# If the pushed range touched any source path, the destination subfolder is replaced.
+# Paths ending in / copy that folder's contents underneath <dest_subfolder>.
 # Usage: sync_doc_paths <dest_subfolder> <dest_repo_path> <dest_branch> <repo_label> <src_path>...
 sync_doc_paths() {
 	local DEST_SUBFOLDER="$1"; shift
@@ -105,18 +108,64 @@ sync_doc_paths() {
 	local SAVED_GIT_WORK_TREE="${GIT_WORK_TREE:-}"
 	unset GIT_DIR GIT_WORK_TREE
 
-	local src_path src_file
+	local SOURCE_CHANGED=0
+	if [ -n "$PUSHED_MAIN_REMOTE_SHA" ] && [[ ! "$PUSHED_MAIN_REMOTE_SHA" =~ ^0+$ ]]; then
+		if git diff --name-only "$PUSHED_MAIN_REMOTE_SHA" "$PUSHED_MAIN_SHA" -- "$@" 2>/dev/null | grep -q .; then
+			SOURCE_CHANGED=1
+		fi
+	else
+		local probe_path
+		for probe_path in "$@"; do
+			if git ls-tree -r --name-only "$PUSHED_MAIN_SHA" -- "$probe_path" 2>/dev/null | grep -q .; then
+				SOURCE_CHANGED=1
+				break
+			fi
+		done
+	fi
+
+	if [ "$SOURCE_CHANGED" != "1" ]; then
+		[ -n "$SAVED_GIT_DIR" ] && export GIT_DIR="$SAVED_GIT_DIR"
+		[ -n "$SAVED_GIT_WORK_TREE" ] && export GIT_WORK_TREE="$SAVED_GIT_WORK_TREE"
+		return
+	fi
+
+	if [ -z "$DEST_SUBFOLDER" ] || [ "$DEST_SUBFOLDER" = "." ]; then
+		echo "Camelot Documentation Sync skipped empty destination subfolder."
+		[ -n "$SAVED_GIT_DIR" ] && export GIT_DIR="$SAVED_GIT_DIR"
+		[ -n "$SAVED_GIT_WORK_TREE" ] && export GIT_WORK_TREE="$SAVED_GIT_WORK_TREE"
+		return
+	fi
+
+	if [ -n "$(git -C "$DEST_REPO_PATH" status --porcelain -- "$DEST_SUBFOLDER" 2>/dev/null)" ]; then
+		echo "Camelot Documentation Sync skipped $DEST_SUBFOLDER — destination has unstaged/uncommitted changes."
+		[ -n "$SAVED_GIT_DIR" ] && export GIT_DIR="$SAVED_GIT_DIR"
+		[ -n "$SAVED_GIT_WORK_TREE" ] && export GIT_WORK_TREE="$SAVED_GIT_WORK_TREE"
+		return
+	fi
+
+	rm -rf "$DEST_REPO_PATH/$DEST_SUBFOLDER"
+	mkdir -p "$DEST_REPO_PATH/$DEST_SUBFOLDER"
+
+	local src_path src_file src_prefix dest_name
 	for src_path in "$@"; do
+		src_prefix=""
+		case "$src_path" in */) src_prefix="$src_path"; esac
 		while IFS= read -r src_file; do
-			if stage_doc_file "$src_file" "$DEST_SUBFOLDER/$src_file" "$DEST_REPO_PATH" "$REPO_ROOT"; then
-				STAGED="$STAGED $DEST_SUBFOLDER/$src_file"
+			dest_name="${src_file#"$src_prefix"}"
+			mkdir -p "$(dirname "$DEST_REPO_PATH/$DEST_SUBFOLDER/$dest_name")"
+			if git show "$PUSHED_MAIN_SHA:$src_file" > "$DEST_REPO_PATH/$DEST_SUBFOLDER/$dest_name" 2>/dev/null; then
+				STAGED="$STAGED $DEST_SUBFOLDER/$dest_name"
 			fi
 		done < <(git ls-tree -r --name-only "$PUSHED_MAIN_SHA" -- "$src_path" 2>/dev/null)
 	done
 
-	if [ -n "$STAGED" ]; then
+	git -C "$DEST_REPO_PATH" add -A "$DEST_SUBFOLDER"
+
+	if ! git -C "$DEST_REPO_PATH" diff --cached --quiet -- "$DEST_SUBFOLDER"; then
 		git -C "$DEST_REPO_PATH" commit -m "Automatically updated $DEST_SUBFOLDER docs from main:$REPO_LABEL, commit $CURRENT_COMMIT"
 		git -C "$DEST_REPO_PATH" push origin "$DEST_BRANCH"
+	else
+		echo "Camelot Documentation Sync skipped $DEST_SUBFOLDER — already up to date."
 	fi
 
 	[ -n "$SAVED_GIT_DIR" ] && export GIT_DIR="$SAVED_GIT_DIR"
@@ -160,6 +209,25 @@ case "$2" in *tfs.acsgs.com/tfs/PDSI/HRS2/_git/HRS%20BTR%20-%20extensibility.cam
 	echo ""
 	sync_doc_paths "TFS.Build.Release" "/c/BTR/Documentation/KAT" "main" "Extensibility.Camelot.TFS.Build.Release" "Readme.md" "Assets"
 esac
+
+# KCC_DOC_REPO_PATH only exists so the sync can be rehearsed against a throwaway destination.
+KCC_DOC_SYNC=0
+case "$2" in *tfs.acsgs.com/tfs/PDSI/HRS2/_git/HRS%20BTR%20-%20extensibility.camelot.kat.command.center|*github.com/terryaney/Extensibility.Camelot.KAT.Command.Center.git)
+	KCC_DOC_SYNC=1
+esac
+
+KCC_REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"
+KCC_REPO_ROOT="${KCC_REPO_ROOT//\\//}"
+case "${KCC_REPO_ROOT,,}" in c:/btr/camelot/extensibility/kat.command.center|/c/btr/camelot/extensibility/kat.command.center)
+	KCC_DOC_SYNC=1
+esac
+
+if [ "$KCC_DOC_SYNC" = "1" ]; then
+	echo ""
+	echo "Updating KAT.Command.Center documentation..."
+	echo ""
+	sync_doc_paths "KAT.Command.Center" "${KCC_DOC_REPO_PATH:-/c/BTR/Documentation/KAT}" "main" "Extensibility.Camelot.KAT.Command.Center" "docs/"
+fi
 
 fi
 
